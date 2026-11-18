@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071321">
+  <meta name="description" content="Banzai 2026 — perpustakaan materi Principal Warfare Officer.">
+  <title>Materi PWO | Banzai 2026</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="PWO Vademecum, beranda">
+      <img class="brand-logo" src="assets/logo/logo-pwo.png" alt="Logo PWO 2026">
+      <span class="brand-copy"><strong>PRINCIPAL WARFARE OFFICER</strong><small>VADEMECUM · CLASS OF 2026</small></span>
+    </a>
+    <nav class="topbar-nav">
+      <a href="index.html" class="topbar-link">BERANDA</a>
+      <a href="materi.html" class="topbar-link is-active">MATERI</a>
+    </nav>
+  </header>
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-content">
+      <p class="hero-kicker"><span></span> PWO LANDING BASE · BANZAI 2026</p>
+      <h1 id="hero-title">Perpustakaan <em>Digital</em></h1>
+      <p>Materi, panduan, dan referensi PWO dalam satu perpustakaan. Pilih kategori untuk menjelajahi dokumen.</p>
+    </div>
+    <span class="hero-motto" aria-hidden="true">気迫 · 精撃 · 必勝</span>
+  </section>
+
+  <main class="workspace">
+    <aside class="sidebar" aria-label="Kategori materi">
+      <p class="side-label">DAFTAR MATERI</p>
+      <nav class="category-nav" id="category-nav"></nav>
+      <div class="side-note">
+        <p>JALESVEVA JAYAMAHE</p>
+      </div>
+    </aside>
+
+    <section class="library" id="library" aria-labelledby="category-title">
+      <div class="search-row">
+        <label class="search-box">
+          <span class="visually-hidden">Cari dokumen pelajaran</span>
+          <input id="search" type="search" placeholder="Cari dokumen pelajaran PWO..." autocomplete="off">
+          <span class="search-icon" aria-hidden="true"></span>
+        </label>
+      </div>
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">PERPUSTAKAAN DIGITAL · BANZAI 2026</p>
+          <h1 id="category-title">1. GENERAL WARFARE <span>(GW)</span></h1>
+        </div>
+        <span class="document-total" id="document-total">0 DOKUMEN</span>
+      </div>
+
+      <p class="status-message" id="status-message" role="status" aria-live="polite"></p>
+      <div class="document-grid" id="document-grid"></div>
+      <noscript>
+        <p class="empty-note">Aktifkan JavaScript untuk melihat dan mengelola dokumen.</p>
+      </noscript>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>BANZAI VADEMECUM · PWO CLASS OF 2026</span>
+    <span>気迫 · 精撃 · 必勝</span>
+  </footer>
+
+  <dialog class="material-dialog" id="material-dialog" aria-labelledby="dialog-title">
+    <form id="material-form">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">KATALOG BANZAI 2026</p>
+          <h2 id="dialog-title">Tambah dokumen</h2>
+        </div>
+        <button class="close-button" id="close-dialog" type="button" aria-label="Tutup">×</button>
+      </div>
+      <p class="dialog-intro">Pilih kategori dan susun dokumen per submateri dan bab. File tetap berada di Google Drive.
+      </p>
+
+      <label class="form-field">
+        <span>Kategori</span>
+        <select name="subject" required></select>
+      </label>
+      <div class="form-row">
+        <label class="form-field">
+          <span>Submateri</span>
+          <input name="module" required maxlength="80" placeholder="Contoh: Taktik AsuW">
+        </label>
+        <label class="form-field">
+          <span>Bab</span>
+          <input name="chapter" required maxlength="80" placeholder="Contoh: Prosedur rudal">
+        </label>
+      </div>
+      <div class="form-row">
+        <label class="form-field">
+          <span>Jenis dokumen</span>
+          <select name="type">
+            <option>MODUL</option>
+            <option>BAHAN AJAR</option>
+            <option>SOP</option>
+            <option>REFERENSI</option>
+          </select>
+        </label>
+        <label class="form-field">
+          <span>Nama dokumen</span>
+          <input name="title" required maxlength="120" placeholder="Contoh: Panduan operasi tempur">
+        </label>
+      </div>
+      <label class="form-field">
+        <span>Tautan Google Drive</span>
+        <input name="url" type="url" required placeholder="https://drive.google.com/...">
+      </label>
+      <p class="form-hint">Atur akses file Drive agar teman sekelas dapat membukanya.</p>
+      <p class="form-error" id="form-error" role="alert"></p>
+      <div class="dialog-actions">
+        <button class="secondary-button" id="cancel-dialog" type="button">Batal</button>
+        <button class="save-button" type="submit">Simpan dokumen <span aria-hidden="true">↗</span></button>
+      </div>
+    </form>
+  </dialog>
+</body>
+
+</html>
