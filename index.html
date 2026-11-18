@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#141313">
-    <meta name="description" content="Banzai Vademecum PWO — pusat materi, catatan teman, dan latihan kelas.">
-    <title>Banzai Vademecum | PWO 2026</title>
+    <meta name="theme-color" content="#071321">
+    <meta name="description" content="Banzai 2026 — perpustakaan materi Principal Warfare Officer.">
+    <title>Banzai 2026 | PWO Landing Base</title>
     <link rel="stylesheet" href="styles.css">
     <script src="app.js" defer></script>
   </head>
@@ -13,125 +13,109 @@
     <header class="topbar">
       <a class="brand" href="#" aria-label="Banzai Vademecum, beranda">
         <span class="brand-mark" aria-hidden="true">卍</span>
-        <span class="brand-copy">
-          <strong>BANZAI</strong>
-          <small>VADEMECUM · PWO 2026</small>
-        </span>
+        <span class="brand-copy"><strong>BANZAI</strong><small>VADEMECUM · PWO 2026</small></span>
       </a>
-      <a class="top-link" href="#library">Perpustakaan <span aria-hidden="true">↓</span></a>
+      <span class="edition">PWO CLASS OF 2026 <span aria-hidden="true">✦</span></span>
     </header>
 
-    <main>
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-content">
-          <p class="eyebrow"><span></span> PWO CLASS OF 2026</p>
-          <h1 id="hero-title">Belajar terarah.<br><em>Melangkah bersama.</em></h1>
-          <p class="hero-description">Satu tempat untuk merapikan materi kelas, catatan teman, dan latihan — dari mapel sampai ke bab.</p>
-          <a class="primary-button" href="#library">Jelajahi materi <span aria-hidden="true">↘</span></a>
-        </div>
-        <div class="hero-caption" aria-hidden="true">
-          <span>気迫 · 精撃 · 必勝</span>
-          <span>SEMANGAT · FOKUS · MENANG</span>
-        </div>
-        <div class="hero-index" aria-hidden="true">一 / 〇一</div>
-      </section>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <p class="hero-kicker"><span></span> PWO LANDING BASE · BANZAI 2026</p>
+        <h1 id="hero-title">Banzai <em>Vademecum</em></h1>
+        <p>Materi, panduan, dan referensi PWO dalam satu perpustakaan. Pilih kategori untuk menjelajahi dokumen.</p>
+        <a class="hero-link" href="#library">JELAJAHI MATERI <span aria-hidden="true">↘</span></a>
+      </div>
+      <span class="hero-motto" aria-hidden="true">気迫 · 精撃 · 必勝</span>
+    </section>
 
-      <section class="library-section" id="library" aria-labelledby="library-title">
+    <main class="workspace">
+      <aside class="sidebar" aria-label="Kategori materi">
+        <p class="side-label">DAFTAR MATERI</p>
+        <nav class="category-nav" id="category-nav"></nav>
+        <div class="side-note">
+          <span class="side-note-mark" aria-hidden="true">卍</span>
+          <p>ILMU · DISIPLIN<br>KEBERANIAN</p>
+        </div>
+      </aside>
+
+      <section class="library" id="library" aria-labelledby="category-title">
+        <div class="search-row">
+          <label class="search-box">
+            <span class="visually-hidden">Cari dokumen pelajaran</span>
+            <input id="search" type="search" placeholder="Cari dokumen pelajaran PWO..." autocomplete="off">
+            <span class="search-icon" aria-hidden="true"></span>
+          </label>
+          <button class="add-button" id="open-dialog" type="button"><span aria-hidden="true">＋</span> Tambah dokumen</button>
+        </div>
+
         <div class="section-heading">
           <div>
-            <p class="eyebrow section-eyebrow">RUANG BELAJAR KELAS</p>
-            <h2 id="library-title">Perpustakaan <span>materi.</span></h2>
+            <p class="eyebrow">PERPUSTAKAAN DIGITAL · BANZAI 2026</p>
+            <h1 id="category-title">SURFACE WARFARE <span>(ASuW)</span></h1>
           </div>
-          <button class="primary-button add-button" id="open-dialog" type="button">
-            <span class="plus" aria-hidden="true">＋</span> Tambah materi
-          </button>
-        </div>
-
-        <div class="stats" aria-label="Ringkasan perpustakaan">
-          <div class="stat"><strong id="subject-count">0</strong><span>MAPEL</span></div>
-          <div class="stat"><strong id="chapter-count">0</strong><span>BAB</span></div>
-          <div class="stat"><strong id="link-count">0</strong><span>TAUTAN</span></div>
-          <p class="stats-note">Materi tersusun rapi, gampang ditemukan.</p>
-        </div>
-
-        <div class="library-tools">
-          <label class="search-box">
-            <span class="search-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Cari materi</span>
-            <input id="search" type="search" placeholder="Cari mapel, submateri, atau bab..." autocomplete="off">
-            <kbd>/</kbd>
-          </label>
-          <div class="filters" role="group" aria-label="Filter jenis materi">
-            <button class="filter-chip is-active" type="button" data-filter="Semua" aria-pressed="true">Semua</button>
-            <button class="filter-chip" type="button" data-filter="Materi" aria-pressed="false">Materi</button>
-            <button class="filter-chip" type="button" data-filter="Catatan teman" aria-pressed="false">Catatan teman</button>
-            <button class="filter-chip" type="button" data-filter="Latihan" aria-pressed="false">Latihan</button>
-          </div>
+          <span class="document-total" id="document-total">0 DOKUMEN</span>
         </div>
 
         <p class="status-message" id="status-message" role="status" aria-live="polite"></p>
-        <div class="library-content" id="library-content"></div>
-        <noscript><p class="empty-note">Aktifkan JavaScript untuk melihat dan mengelola materi.</p></noscript>
+        <div class="document-grid" id="document-grid"></div>
+        <noscript><p class="empty-note">Aktifkan JavaScript untuk melihat dan mengelola dokumen.</p></noscript>
       </section>
     </main>
 
     <footer class="footer">
-      <a class="brand footer-brand" href="#" aria-label="Kembali ke atas">
-        <span class="brand-mark" aria-hidden="true">卍</span>
-        <span class="brand-copy"><strong>BANZAI</strong><small>VADEMECUM · PWO 2026</small></span>
-      </a>
-      <p>Belajar bareng, tumbuh bareng.</p>
-      <a class="back-to-top" href="#">Kembali ke atas ↑</a>
+      <span>BANZAI VADEMECUM · PWO CLASS OF 2026</span>
+      <span>SEMANGAT · FOKUS · MENANG</span>
     </footer>
 
     <dialog class="material-dialog" id="material-dialog" aria-labelledby="dialog-title">
       <form id="material-form">
         <div class="dialog-heading">
           <div>
-            <p class="eyebrow section-eyebrow">TAMBAHKAN KE PERPUSTAKAAN</p>
-            <h2 id="dialog-title">Bagikan <span>materi.</span></h2>
+            <p class="eyebrow">KATALOG BANZAI 2026</p>
+            <h2 id="dialog-title">Tambah dokumen</h2>
           </div>
           <button class="close-button" id="close-dialog" type="button" aria-label="Tutup">×</button>
         </div>
-        <p class="dialog-intro">Susun materi berdasarkan mapel, submateri, dan bab. Tautan akan dibuka langsung dari Google Drive.</p>
+        <p class="dialog-intro">Pilih kategori dan susun dokumen per submateri dan bab. File tetap berada di Google Drive.</p>
 
         <label class="form-field">
-          <span>Mapel</span>
-          <input name="subject" required maxlength="80" placeholder="Contoh: Matematika">
+          <span>Kategori</span>
+          <select name="subject" required></select>
         </label>
         <div class="form-row">
           <label class="form-field">
             <span>Submateri</span>
-            <input name="module" required maxlength="80" placeholder="Contoh: Aljabar">
+            <input name="module" required maxlength="80" placeholder="Contoh: Taktik AsuW">
           </label>
           <label class="form-field">
             <span>Bab</span>
-            <input name="chapter" required maxlength="80" placeholder="Contoh: Persamaan linear">
+            <input name="chapter" required maxlength="80" placeholder="Contoh: Prosedur rudal">
           </label>
         </div>
         <div class="form-row">
           <label class="form-field">
-            <span>Jenis</span>
+            <span>Jenis dokumen</span>
             <select name="type">
-              <option>Materi</option>
-              <option>Catatan teman</option>
-              <option>Latihan</option>
+              <option>MODUL</option>
+              <option>BAHAN AJAR</option>
+              <option>SOP</option>
+              <option>REFERENSI</option>
             </select>
           </label>
           <label class="form-field">
-            <span>Nama file / tautan</span>
-            <input name="title" required maxlength="100" placeholder="Contoh: Rangkuman bab 1">
+            <span>Nama dokumen</span>
+            <input name="title" required maxlength="120" placeholder="Contoh: Panduan operasi tempur">
           </label>
         </div>
         <label class="form-field">
           <span>Tautan Google Drive</span>
           <input name="url" type="url" required placeholder="https://drive.google.com/...">
         </label>
-        <p class="form-hint">Pastikan akses file Drive diatur agar teman sekelas dapat membukanya.</p>
+        <p class="form-hint">Atur akses file Drive agar teman sekelas dapat membukanya.</p>
         <p class="form-error" id="form-error" role="alert"></p>
         <div class="dialog-actions">
           <button class="secondary-button" id="cancel-dialog" type="button">Batal</button>
-          <button class="primary-button" type="submit">Simpan materi <span aria-hidden="true">↗</span></button>
+          <button class="save-button" type="submit">Simpan dokumen <span aria-hidden="true">↗</span></button>
         </div>
       </form>
     </dialog>

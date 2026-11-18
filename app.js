@@ -1,12 +1,88 @@
-const STORAGE_KEY = "banzai-vademecum-materials";
-const materialsContainer = document.querySelector("#library-content");
+const STORAGE_KEY = "banzai-pwo-library";
+const CATEGORIES = [
+  { name: "SURFACE WARFARE (ASuW)", short: "ASuW", icon: "⚓" },
+  { name: "ANTI-SUBMARINE WARFARE (ASW)", short: "ASW", icon: "◉" },
+  { name: "ELECTRONIC WARFARE (EW)", short: "EW", icon: "◌" },
+  { name: "AIR OPS & ATO", short: "AIR", icon: "✈" },
+  { name: "REFERENSI UMUM", short: "UMUM", icon: "▤" },
+];
+const STARTER_MATERIALS = [
+  {
+    id: "starter-asuw-1",
+    subject: CATEGORIES[0].name,
+    module: "TAKTIK ASUW",
+    chapter: "PROSEDUR PENEMBAKAN RUDAL",
+    type: "MODUL",
+    title: "Modul Taktis AsuW - Prosedur Penembakan Rudal",
+    url: "",
+  },
+  {
+    id: "starter-asuw-2",
+    subject: CATEGORIES[0].name,
+    module: "PANDUAN OPERASI",
+    chapter: "TEMPUR LAUT",
+    type: "MODUL",
+    title: "Panduan Operasi Tempur Laut Kapal Kombatan",
+    url: "",
+  },
+  {
+    id: "starter-asuw-3",
+    subject: CATEGORIES[0].name,
+    module: "PANDUAN OPERASI",
+    chapter: "TEMPUR LAUT",
+    type: "BAHAN AJAR",
+    title: "Panduan Operasi Tempur Laut Kapal Kombatan",
+    url: "",
+  },
+  {
+    id: "starter-asuw-4",
+    subject: CATEGORIES[0].name,
+    module: "KOMUNIKASI TAKTIS",
+    chapter: "KESIAPAN SENJATA",
+    type: "BAHAN AJAR",
+    title: "SOP Komunikasi Taktis dan Kesiapan Senjata",
+    url: "",
+  },
+  {
+    id: "starter-asuw-5",
+    subject: CATEGORIES[0].name,
+    module: "PANDUAN OPERASI TEMPUR LAUT",
+    chapter: "OPERASI ASUW",
+    type: "BAHAN AJAR",
+    title: "Panduan Operasi Tempur Laut AsuW",
+    url: "",
+  },
+  {
+    id: "starter-asuw-6",
+    subject: CATEGORIES[0].name,
+    module: "SOP KOMUNIKASI",
+    chapter: "KESIAPAN ASUW",
+    type: "BAHAN AJAR",
+    title: "SOP Komunikasi Kesiapan AsuW",
+    url: "",
+  },
+  {
+    id: "starter-asuw-7",
+    subject: CATEGORIES[0].name,
+    module: "TAKTIK ASUW",
+    chapter: "PROSEDUR RUDAL",
+    type: "MODUL",
+    title: "Modul Taktis AsuW - Prosedur Rudal",
+    url: "",
+  },
+];
+
+const categoryNav = document.querySelector("#category-nav");
+const documentGrid = document.querySelector("#document-grid");
+const documentTotal = document.querySelector("#document-total");
+const categoryTitle = document.querySelector("#category-title");
 const searchInput = document.querySelector("#search");
 const statusMessage = document.querySelector("#status-message");
 const dialog = document.querySelector("#material-dialog");
 const form = document.querySelector("#material-form");
 const formError = document.querySelector("#form-error");
-const filterButtons = [...document.querySelectorAll(".filter-chip")];
-let activeFilter = "Semua";
+let activeCategory = CATEGORIES[0].name;
+let editingId = null;
 let materials = loadMaterials();
 
 function showStatus(message) {
@@ -16,13 +92,13 @@ function showStatus(message) {
 function loadMaterials() {
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (!stored) return [];
+    if (stored === null) return STARTER_MATERIALS.map((item) => ({ ...item }));
     const parsed = JSON.parse(stored);
-    if (!Array.isArray(parsed)) throw new Error("Format data perpustakaan tidak valid.");
+    if (!Array.isArray(parsed)) throw new Error("Format data katalog tidak valid.");
     return parsed;
   } catch (error) {
     showStatus(`Data lokal tidak dapat dibaca: ${error.message}`);
-    return [];
+    return STARTER_MATERIALS.map((item) => ({ ...item }));
   }
 }
 
@@ -31,10 +107,10 @@ function saveMaterials(nextMaterials) {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextMaterials));
     materials = nextMaterials;
     showStatus("");
-    renderMaterials();
+    renderLibrary();
     return true;
   } catch (error) {
-    showStatus(`Materi tidak dapat disimpan di browser ini: ${error.message}`);
+    showStatus(`Dokumen tidak dapat disimpan di browser ini: ${error.message}`);
     return false;
   }
 }
@@ -46,177 +122,171 @@ function makeElement(tag, className, text) {
   return element;
 }
 
+function buildCategoryNav() {
+  categoryNav.replaceChildren();
+  for (const category of CATEGORIES) {
+    const button = makeElement("button", "category-button");
+    button.type = "button";
+    button.classList.toggle("is-active", category.name === activeCategory);
+    button.setAttribute("aria-pressed", String(category.name === activeCategory));
+    const count = materials.filter((item) => item.subject === category.name).length;
+    const icon = makeElement("span", "category-icon", category.icon);
+    icon.setAttribute("aria-hidden", "true");
+    button.append(
+      icon,
+      makeElement("span", "category-name", category.name),
+      makeElement("span", "category-count", String(count).padStart(2, "0")),
+    );
+    button.addEventListener("click", () => {
+      activeCategory = category.name;
+      searchInput.value = "";
+      renderLibrary();
+    });
+    categoryNav.append(button);
+  }
+}
+
 function filteredMaterials() {
   const query = searchInput.value.trim().toLocaleLowerCase("id");
   return materials.filter((item) => {
-    const matchesType = activeFilter === "Semua" || item.type === activeFilter;
     const searchable = [item.subject, item.module, item.chapter, item.title, item.type]
       .join(" ")
       .toLocaleLowerCase("id");
-    return matchesType && searchable.includes(query);
+    return item.subject === activeCategory && searchable.includes(query);
   });
 }
 
-function makeResource(item) {
-  const card = makeElement("article", "resource");
-  const icon = makeElement("span", "resource-type", item.type === "Latihan" ? "✎" : item.type === "Catatan teman" ? "✦" : "文");
-  icon.setAttribute("aria-hidden", "true");
+function makeDocumentCard(item) {
+  const card = makeElement("article", "document-card");
+  const topLine = makeElement("div", "document-topline");
+  const type = makeElement("span", "document-type", item.type);
+  type.dataset.type = item.type;
+  topLine.append(type);
 
-  const info = makeElement("span", "resource-info");
-  info.append(makeElement("strong", "", item.title), makeElement("span", "", item.type));
+  const title = makeElement("h2", "document-title", item.title);
+  const path = makeElement("p", "document-path");
+  path.append(
+    document.createTextNode(`${item.module}  /  `),
+    makeElement("span", "", item.chapter),
+  );
 
-  const openLink = makeElement("a", "resource-open", "↗");
-  openLink.href = item.url;
-  openLink.target = "_blank";
-  openLink.rel = "noopener noreferrer";
-  openLink.setAttribute("aria-label", `Buka ${item.title} di Google Drive`);
+  const footer = makeElement("div", "document-footer");
+  const fileInfo = makeElement("span", "file-info");
+  fileInfo.append(makeElement("span", "pdf-icon", "▣"), document.createTextNode("GOOGLE DRIVE"));
+  const linked = Boolean(item.url);
+  const linkState = makeElement("span", `link-state${linked ? " is-linked" : ""}`, linked ? "TAUTAN SIAP" : "BELUM DITAMBAHKAN");
 
-  const removeButton = makeElement("button", "remove-resource", "Hapus");
-  removeButton.type = "button";
-  removeButton.setAttribute("aria-label", `Hapus tautan ${item.title}`);
-  removeButton.addEventListener("click", () => {
-    if (!window.confirm(`Hapus tautan "${item.title}" dari perpustakaan ini?`)) return;
-    saveMaterials(materials.filter((material) => material.id !== item.id));
+  const action = makeElement("button", `document-action${linked ? " is-linked" : ""}`, linked ? "BUKA DRIVE ↗" : "HUBUNGKAN DRIVE");
+  action.type = "button";
+  action.addEventListener("click", () => {
+    if (linked) {
+      window.open(item.url, "_blank", "noopener,noreferrer");
+      return;
+    }
+    openDialog(item);
   });
 
-  card.append(icon, info, openLink, removeButton);
+  const meta = makeElement("span", "document-meta");
+  meta.append(fileInfo, linkState);
+  footer.append(meta, action);
+  card.append(topLine, title, path, footer);
+
+  const removeButton = makeElement("button", "remove-button", "×");
+  removeButton.type = "button";
+  removeButton.setAttribute("aria-label", `Hapus ${item.title}`);
+  removeButton.title = "Hapus dari katalog";
+  removeButton.addEventListener("click", () => {
+    if (!window.confirm(`Hapus "${item.title}" dari katalog ini?`)) return;
+    saveMaterials(materials.filter((material) => material.id !== item.id));
+  });
+  topLine.append(removeButton);
   return card;
 }
 
-function updateStats() {
-  const subjects = new Set(materials.map((item) => item.subject));
-  const chapters = new Set(materials.map((item) => `${item.subject}\u0000${item.module}\u0000${item.chapter}`));
-  document.querySelector("#subject-count").textContent = subjects.size;
-  document.querySelector("#chapter-count").textContent = chapters.size;
-  document.querySelector("#link-count").textContent = materials.length;
-}
+function renderLibrary() {
+  const category = CATEGORIES.find((item) => item.name === activeCategory) || CATEGORIES[0];
+  categoryTitle.textContent = category.name.replace(` (${category.short})`, "");
+  const suffix = ` (${category.short})`;
+  if (category.name.includes(suffix)) {
+    categoryTitle.append(makeElement("span", "", suffix));
+  }
+  buildCategoryNav();
 
-function renderMaterials() {
-  updateStats();
-  materialsContainer.replaceChildren();
-  const visibleMaterials = filteredMaterials();
+  const visible = filteredMaterials();
+  documentTotal.textContent = `${visible.length} DOKUMEN`;
+  documentGrid.replaceChildren();
 
-  if (materials.length === 0) {
-    const empty = makeElement("div", "empty-state");
-    empty.append(
-      makeElement("span", "empty-mark", "卍"),
-      makeElement("h3", "", "Mulai susun materi kelas"),
-      makeElement("p", "", "Tambahkan tautan Google Drive, lalu kelompokkan per mapel, submateri, dan bab. Materi yang kamu tambahkan tersimpan di browser ini."),
-    );
-    const addButton = makeElement("button", "primary-button", "Tambahkan materi pertama ↗");
+  if (visible.length) {
+    visible.forEach((item) => documentGrid.append(makeDocumentCard(item)));
+    return;
+  }
+
+  const isSearching = searchInput.value.trim().length > 0;
+  const empty = makeElement("div", "empty-state");
+  empty.append(
+    makeElement("span", "empty-mark", "⚓"),
+    makeElement("h2", "", isSearching ? "Dokumen tidak ditemukan" : "Belum ada dokumen di kategori ini"),
+    makeElement("p", "", isSearching
+      ? "Coba kata kunci lain atau pilih kategori berbeda."
+      : "Tambahkan dokumen dan tautan Drive untuk melengkapi materi kategori ini."),
+  );
+  if (!isSearching) {
+    const addButton = makeElement("button", "add-button", "＋ Tambah dokumen");
     addButton.type = "button";
-    addButton.addEventListener("click", openDialog);
+    addButton.addEventListener("click", () => openDialog());
     empty.append(addButton);
-    materialsContainer.append(empty);
-    return;
   }
-
-  if (visibleMaterials.length === 0) {
-    materialsContainer.append(makeElement("p", "no-results", "Belum ada materi yang cocok. Coba kata kunci atau filter lain."));
-    return;
-  }
-
-  const subjects = groupBy(visibleMaterials, "subject");
-  let subjectIndex = 0;
-  for (const [subject, subjectItems] of subjects) {
-    subjectIndex += 1;
-    const subjectCard = document.createElement("details");
-    subjectCard.className = "subject-card";
-    subjectCard.open = true;
-
-    const summary = document.createElement("summary");
-    summary.append(
-      makeElement("span", "subject-number", String(subjectIndex).padStart(2, "0")),
-      makeElement("span", "subject-title", subject),
-      makeElement("span", "subject-count", `${subjectItems.length} TAUTAN`),
-    );
-
-    const subjectBody = makeElement("div", "subject-body");
-    const modules = groupBy(subjectItems, "module");
-    for (const [module, moduleItems] of modules) {
-      const moduleDetails = document.createElement("details");
-      moduleDetails.className = "module";
-      moduleDetails.open = true;
-      const moduleSummary = document.createElement("summary");
-      moduleSummary.textContent = module;
-      moduleDetails.append(moduleSummary);
-
-      const chapters = groupBy(moduleItems, "chapter");
-      for (const [chapter, chapterItems] of chapters) {
-        const chapterSection = makeElement("section", "chapter");
-        chapterSection.append(makeElement("h4", "chapter-title", chapter));
-        const resourceList = makeElement("div", "resource-list");
-        chapterItems.forEach((item) => resourceList.append(makeResource(item)));
-        chapterSection.append(resourceList);
-        moduleDetails.append(chapterSection);
-      }
-      subjectBody.append(moduleDetails);
-    }
-
-    subjectCard.append(summary, subjectBody);
-    materialsContainer.append(subjectCard);
-  }
+  documentGrid.append(empty);
 }
 
-function groupBy(items, key) {
-  const groups = new Map();
-  for (const item of items) {
-    if (!groups.has(item[key])) groups.set(item[key], []);
-    groups.get(item[key]).push(item);
-  }
-  return groups;
-}
-
-function openDialog() {
+function openDialog(item) {
+  editingId = item ? item.id : null;
+  form.reset();
   formError.textContent = "";
+  form.elements.subject.replaceChildren();
+  for (const category of CATEGORIES) {
+    const option = document.createElement("option");
+    option.value = category.name;
+    option.textContent = category.name;
+    form.elements.subject.append(option);
+  }
+  if (item) {
+    form.elements.subject.value = item.subject;
+    form.elements.module.value = item.module;
+    form.elements.chapter.value = item.chapter;
+    form.elements.type.value = item.type;
+    form.elements.title.value = item.title;
+  } else {
+    form.elements.subject.value = activeCategory;
+  }
+  document.querySelector("#dialog-title").textContent = item ? "Hubungkan Google Drive" : "Tambah dokumen";
   dialog.showModal();
-  form.elements.subject.focus();
+  form.elements.url.focus();
 }
 
-document.querySelector("#open-dialog").addEventListener("click", openDialog);
+document.querySelector("#open-dialog").addEventListener("click", () => openDialog());
 document.querySelector("#close-dialog").addEventListener("click", () => dialog.close());
 document.querySelector("#cancel-dialog").addEventListener("click", () => dialog.close());
-searchInput.addEventListener("input", renderMaterials);
-
-filterButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    activeFilter = button.dataset.filter;
-    filterButtons.forEach((filterButton) => {
-      const isActive = filterButton === button;
-      filterButton.classList.toggle("is-active", isActive);
-      filterButton.setAttribute("aria-pressed", String(isActive));
-    });
-    renderMaterials();
-  });
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "/" && !dialog.open && !["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)) {
-    event.preventDefault();
-    searchInput.focus();
-  }
-});
+searchInput.addEventListener("input", renderLibrary);
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   formError.textContent = "";
   const values = new FormData(form);
-  const urlValue = String(values.get("url")).trim();
   let url;
   try {
-    url = new URL(urlValue);
+    url = new URL(String(values.get("url")).trim());
   } catch {
     formError.textContent = "Masukkan tautan Google Drive yang valid.";
     return;
   }
-
   if (url.protocol !== "https:" || !["drive.google.com", "docs.google.com"].includes(url.hostname)) {
     formError.textContent = "Gunakan tautan HTTPS dari drive.google.com atau docs.google.com.";
     return;
   }
 
   const item = {
-    id: crypto.randomUUID(),
+    id: editingId || crypto.randomUUID(),
     subject: String(values.get("subject")).trim(),
     module: String(values.get("module")).trim(),
     chapter: String(values.get("chapter")).trim(),
@@ -229,10 +299,15 @@ form.addEventListener("submit", (event) => {
     return;
   }
 
-  if (saveMaterials([...materials, item])) {
-    form.reset();
+  const nextMaterials = editingId
+    ? materials.map((material) => material.id === editingId ? item : material)
+    : [...materials, item];
+  if (saveMaterials(nextMaterials)) {
+    activeCategory = item.subject;
+    searchInput.value = "";
+    renderLibrary();
     dialog.close();
   }
 });
 
-renderMaterials();
+renderLibrary();
