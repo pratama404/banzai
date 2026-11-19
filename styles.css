@@ -1076,9 +1076,14 @@ a {
 }
 
 /* ── CTA ───────────────────────────────────── */
-.document-action {
+.document-actions {
   margin-top: auto;
-  height: 42px;
+  display: grid;
+  gap: 8px;
+}
+
+.document-action {
+  height: 40px;
   display: flex;
   align-items: stretch;
   border: 1px solid transparent;
@@ -1151,6 +1156,26 @@ a {
 .document-action.is-linked:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
+}
+
+.document-action.is-secondary {
+  border-color: #5b4d38;
+  background: #211e1b;
+  color: #e4d2ad;
+}
+
+.document-action.is-secondary::before {
+  background: #2d251b;
+}
+
+.document-action.is-secondary .document-action__icon {
+  border-left-color: rgba(211, 168, 79, .24);
+  color: var(--gold);
+}
+
+.document-action.is-secondary:hover {
+  border-color: var(--gold);
+  color: #fff4d6;
 }
 
 .document-action.is-disabled {

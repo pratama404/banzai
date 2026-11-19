@@ -2,16 +2,17 @@
  * =========================================================================
  * BANZAI PWO 2026 — DAFTAR MATERI & TAUTAN GOOGLE DRIVE (STATIC / HARDCODED)
  * =========================================================================
- * PANDUAN PENGISIAN TAUTAN GOOGLE DRIVE:
- * - Isi nilai `url` dengan tautan Google Drive dokumen Anda:
- *     url: "https://drive.google.com/file/d/1234567890/view?usp=sharing"
+ * PANDUAN PENGISIAN TAUTAN GOOGLE DRIVE (MULTI-LINK):
+ * - Setiap materi mendukung lebih dari satu sumber melalui properti `links`:
+ *     links: {
+ *       module: "https://docs.google.com/...",  // CTA: MODULE (PI)
+ *       lessons: "https://drive.google.com/..." // CTA: LESSONS
+ *     }
  *
- * - Jika dokumen belum memiliki link, biarkan `url: ""` (string kosong).
- *   Sistem otomatis menampilkan tombol "BELUM TERSEDIA" (nonaktif).
- *
- * - Untuk menambah materi baru, cukup copy salah satu blok objek di bawah
- *   lalu sesuaikan `subject` (isi dengan nama sub-materi atau kategori utama),
- *   `module`, `chapter`, `type`, `title`, dan `url`.
+ * - Jika salah satu kosong (""), hanya CTA yang memiliki link yang ditampilkan.
+ * - Jika semua kosong, otomatis menampilkan tombol "BELUM TERSEDIA" (nonaktif).
+ * - Anda juga bisa menambah key tambahan di dalam `links` (misal `latihan: "https://..."`)
+ *   atau memakai array: `links: [{ label: "MODULE (PI)", url: "..." }, { label: "LESSONS", url: "..." }]`.
  * =========================================================================
  */
 
@@ -129,7 +130,10 @@ const MATERIALS = [
     chapter: "BAHASA INGGRIS",
     type: "MODUL",
     title: "Performing a short talk",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
   {
     id: "gw-inggris-2",
@@ -138,7 +142,10 @@ const MATERIALS = [
     chapter: "BAHASA INGGRIS",
     type: "MODUL",
     title: "Speech Development",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
   {
     id: "gw-inggris-3",
@@ -147,7 +154,10 @@ const MATERIALS = [
     chapter: "BAHASA INGGRIS",
     type: "MODUL",
     title: "Participating in the meeting",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
   {
     id: "gw-inggris-4",
@@ -156,7 +166,10 @@ const MATERIALS = [
     chapter: "BAHASA INGGRIS",
     type: "MODUL",
     title: "Powerpoint (PPT) development",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
   {
     id: "gw-inggris-5",
@@ -165,7 +178,10 @@ const MATERIALS = [
     chapter: "BAHASA INGGRIS",
     type: "MODUL",
     title: "Performing in a Debate",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
 
   // Manajemen Tempur
@@ -176,7 +192,10 @@ const MATERIALS = [
     chapter: "MANAJEMEN TEMPUR",
     type: "MODUL",
     title: "Dinas Informasi Tempur",
-    url: "https://docs.google.com/presentation/d/1wAgSmnyXkYHisadrwWVHnS0nLtEB0Zls/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1oWgnbrA_sr-Zk4U77YWkIW6PhHDDD25s/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1wAgSmnyXkYHisadrwWVHnS0nLtEB0Zls/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "gw-manajemen-2",
@@ -185,7 +204,10 @@ const MATERIALS = [
     chapter: "MANAJEMEN TEMPUR",
     type: "MODUL",
     title: "Aturan Pelibatan (ROE)",
-    url: "https://docs.google.com/presentation/d/1rCt_dSNpU0gGqZAKX8fmMWf6XGygwkIg/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/17xcShxpNLsUPeCjvM6FKfbOWlTqB0NMA/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1rCt_dSNpU0gGqZAKX8fmMWf6XGygwkIg/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "gw-manajemen-3",
@@ -194,7 +216,10 @@ const MATERIALS = [
     chapter: "MANAJEMEN TEMPUR",
     type: "MODUL",
     title: "Laporan Sergapan (Raid Reporting)",
-    url: "https://docs.google.com/presentation/d/1bhbsUlJp7efF1MRlkrojPvLe7tZFtvUu/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
+    links: {
+      module: "https://docs.google.com/presentation/d/1bhbsUlJp7efF1MRlkrojPvLe7tZFtvUu/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
+      lessons: "https://drive.google.com/file/d/19O_NoOizfuIaBZNM-mL0FqNhKWRYMa6m/view?usp=sharing",
+    },
   },
   {
     id: "gw-manajemen-4",
@@ -203,7 +228,10 @@ const MATERIALS = [
     chapter: "MANAJEMEN TEMPUR",
     type: "MODUL",
     title: "Command, Control, Computer, Communication, Cyber, Intelligence, Surveillance and Reconnaissance (C5ISR)",
-    url: "https://docs.google.com/presentation/d/19gXes1ZQ1eVO_DY6X8lY7LiHrhRilE9V/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
+    links: {
+      module: "https://drive.google.com/file/d/1a8Z2Lbd04zBXqg-fRF7-haYbC_G-11J6/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/19gXes1ZQ1eVO_DY6X8lY7LiHrhRilE9V/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
+    },
   },
   {
     id: "gw-manajemen-5",
@@ -212,7 +240,10 @@ const MATERIALS = [
     chapter: "MANAJEMEN TEMPUR",
     type: "MODUL",
     title: "Peperangan Asimetris",
-    url: "https://docs.google.com/presentation/d/1Cq24LjG6nw2wahhihLYgoNa423QvQo96/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "",
+      lessons: "https://docs.google.com/presentation/d/1Cq24LjG6nw2wahhihLYgoNa423QvQo96/present?slide=id.p1#slide=id.p1",
+    },
   },
 
   // Informasi Tempur
@@ -223,7 +254,10 @@ const MATERIALS = [
     chapter: "INFORMASI TEMPUR",
     type: "MODUL",
     title: "Pengenalan (Recognition)",
-    url: "https://drive.google.com/drive/folders/1Pko0sAg2i-a4-wfDjiDaJGqYHlp26VWT",
+    links: {
+      module: "https://drive.google.com/file/d/1H_FPjLqsRLXqGNEtKqX1zzErOtpPBubo/view?usp=sharing",
+      lessons: "https://drive.google.com/drive/folders/1Pko0sAg2i-a4-wfDjiDaJGqYHlp26VWT",
+    },
   },
   {
     id: "gw-informasi-2",
@@ -232,7 +266,10 @@ const MATERIALS = [
     chapter: "INFORMASI TEMPUR",
     type: "MODUL",
     title: "Kemampuan Regional (Regcap)",
-    url: "https://docs.google.com/presentation/d/1PRAvp0quaPmu6WEUWVX1p5yRawMWmn0w/present?slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1cMwnEL9xOBrOQJ5TSv8KNqkH-2bAB6vt/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1PRAvp0quaPmu6WEUWVX1p5yRawMWmn0w/present?slide=id.p1",
+    },
   },
   {
     id: "gw-informasi-3",
@@ -241,7 +278,10 @@ const MATERIALS = [
     chapter: "INFORMASI TEMPUR",
     type: "MODUL",
     title: "Intelijen Maritim",
-    url: "https://docs.google.com/presentation/d/1wAgSmnyXkYHisadrwWVHnS0nLtEB0Zls/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1iPaa2rfDYeox3rmpllYy7QcGlYHIdhqZ/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1wAgSmnyXkYHisadrwWVHnS0nLtEB0Zls/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "gw-informasi-4",
@@ -250,7 +290,10 @@ const MATERIALS = [
     chapter: "INFORMASI TEMPUR",
     type: "MODUL",
     title: "Komunikasi Pertempuran",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
   {
     id: "gw-informasi-5",
@@ -259,7 +302,10 @@ const MATERIALS = [
     chapter: "INFORMASI TEMPUR",
     type: "MODUL",
     title: "Meteorologi",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -273,7 +319,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Introduksi AKPA",
-    url: "https://drive.google.com/drive/folders/1GSqBUNa_jHjSmbHmwCvCNdCoQC0Dv41w",
+    links: {
+      module: "",
+      lessons: "https://drive.google.com/drive/folders/1GSqBUNa_jHjSmbHmwCvCNdCoQC0Dv41w",
+    },
   },
   {
     id: "asuw-prosedur-2",
@@ -282,7 +331,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Perencanaan Operasi AKPA",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1acqwDN6h7sXpM7cyI0vvV6evluAB7Um3/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/15Cd2ayda13mgoxiSh4Qf1mE34A8jJmcz/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "asuw-prosedur-3",
@@ -291,7 +343,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Kalkulasi Tempur AKPA",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1RS6_bySn1MdlIJ35dOkXXYpoYHBRi9yt/view?usp=sharing",
+      lessons: "https://drive.google.com/file/d/1QlCY_JhoYwL91hlmtS7Bu1IqP6WufzBM/view?usp=sharing",
+    },
   },
   {
     id: "asuw-prosedur-4",
@@ -300,7 +355,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Gambaran Taktis AKPA",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/17pSekeinc2ewc8uTdUzFWrCdqHPWPi1W/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/17DmnVfhf6rJkC0k0Odqyt4Bi99KgQRog/present?rtpof=true&slide=id.p1",
+    },
   },
   {
     id: "asuw-prosedur-5",
@@ -309,7 +367,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Proskomtis AKPA",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1YhRPA54bqonoLcv3enOG1QEPGYVhnlx1/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asuw-prosedur-6",
@@ -318,7 +379,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Sensor AKPA",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/12YhP9cni5l3TAak-PdbkYywGUIAtKkoZ/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asuw-prosedur-7",
@@ -327,7 +391,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Kerjasama Taktis Pesud dan KAA",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1rZluBL0gYzt32gO-092R97xWtyDG0ptj/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asuw-prosedur-8",
@@ -336,7 +403,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Gugus Aksi Permukaan (Surface Action Group)",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1BvizX6rf8bWnFSnosuSiYhmfJCqMbUFV/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asuw-prosedur-9",
@@ -345,7 +415,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Over The Horizon Target (Penembakan Sasaran Melewati Cakrawala)",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1wRtRBCbbDBIGfNpT52QXv1f-OJwDjDeE/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asuw-prosedur-10",
@@ -354,7 +427,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Serangan Jarak Dekat",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1bPFHO1K--odNfloqbn8FzEMm3XtDIcm2/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asuw-prosedur-11",
@@ -363,7 +439,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Pengaruh Alam dalam AKPA",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1MZLz_wtdxJ3nhBSdHLVSjLU8yrk_6tOP/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asuw-prosedur-12",
@@ -372,7 +451,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Kodal AKPA",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1J86QhfZ_FyVRIWifV7ogPUC_4pAiLcB9/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asuw-prosedur-13",
@@ -381,7 +463,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "SAR dalam AKPA",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
 
   // Penggunaan Senjata AKPA
@@ -392,7 +477,10 @@ const MATERIALS = [
     chapter: "PENGGUNAAN SENJATA AKPA",
     type: "MODUL",
     title: "Penggunaan Meriam AKPA dan BTK",
-    url: "https://drive.google.com/file/d/1HpclmHSImTu-3JLbC3S4bVstCCbyNnWr/view?usp=sharing",
+    links: {
+      module: "https://drive.google.com/file/d/1-_KdiWpP3Xrz-fwX2GPYqtRiIS_uWUQq/view?usp=sharing",
+      lessons: "https://drive.google.com/file/d/1HpclmHSImTu-3JLbC3S4bVstCCbyNnWr/view?usp=sharing",
+    },
   },
   {
     id: "asuw-senjata-2",
@@ -401,7 +489,10 @@ const MATERIALS = [
     chapter: "PENGGUNAAN SENJATA AKPA",
     type: "MODUL",
     title: "Penggunaan Rudal",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1ZKc3BDv6ZZtx8RHUaQzPuo5QR4DT-ZMn/view?usp=sharing",
+      lessons: "",
+    },
   },
 
   // Taktik Peperangan Fast Patrol Boat
@@ -412,7 +503,10 @@ const MATERIALS = [
     chapter: "TAKTIK PEPERANGAN FAST PATROL BOAT",
     type: "MODUL",
     title: "Operasi FPB",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1YQtwvbyE_dlfGBlYU5UDl89WDa7hUIFE/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asuw-fpb-2",
@@ -421,7 +515,10 @@ const MATERIALS = [
     chapter: "TAKTIK PEPERANGAN FAST PATROL BOAT",
     type: "MODUL",
     title: "Anti FPB",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1zjKITMGRjd8-i6Lq7uDa2QjDxHfaLel7/view?usp=sharing",
+      lessons: "",
+    },
   },
 
   // Latihan Simulasi Peperangan AKPA
@@ -432,7 +529,10 @@ const MATERIALS = [
     chapter: "LATIHAN SIMULASI PEPERANGAN AKPA",
     type: "MODUL",
     title: "Latihan Simulasi Peperangan AKPA",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -446,7 +546,10 @@ const MATERIALS = [
     chapter: "PENGARUH ALAM DALAM AKS",
     type: "MODUL",
     title: "Hidro Oceanografi dalam AKS",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1GFFayYQRak14ThLUzu4yCNEImjlDoaK0/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asw-alam-2",
@@ -455,7 +558,10 @@ const MATERIALS = [
     chapter: "PENGARUH ALAM DALAM AKS",
     type: "MODUL",
     title: "Propagasi Bawah Air",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/144dcJioL42Zg5sbODTuE7lqT2khj61Uk/view?usp=sharing",
+      lessons: "",
+    },
   },
 
   // Prosedur Taktis AKS
@@ -466,7 +572,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Introduksi AKS",
-    url: "https://drive.google.com/file/d/1HpclmHSImTu-3JLbC3S4bVstCCbyNnWr/view?usp=sharing",
+    links: {
+      module: "https://drive.google.com/file/d/1HpclmHSImTu-3JLbC3S4bVstCCbyNnWr/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asw-prosedur-2",
@@ -475,7 +584,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Perencanaan Operasi AKS",
-    url: "https://docs.google.com/presentation/d/1y0nnJHBCBKpSBIBXw7NDQDldcIs6rlgl/present?slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1LllDoD5bMlmI26KB4JNnXG9EVdobVZTI/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1y0nnJHBCBKpSBIBXw7NDQDldcIs6rlgl/present?slide=id.p1",
+    },
   },
   {
     id: "asw-prosedur-3",
@@ -484,7 +596,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Gambaran Taktis AKS",
-    url: "https://docs.google.com/presentation/d/1an6fhUKWD2ff5v2RJDHdCB2b-T94tEz-/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1bdrPrupdUFtn_TQL8NkMxpw1j3wE-0TL/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1an6fhUKWD2ff5v2RJDHdCB2b-T94tEz-/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "asw-prosedur-4",
@@ -493,7 +608,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Proskomtis AKS",
-    url: "https://docs.google.com/presentation/d/1an6fhUKWD2ff5v2RJDHdCB2b-T94tEz-/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1YhRPA54bqonoLcv3enOG1QEPGYVhnlx1/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1an6fhUKWD2ff5v2RJDHdCB2b-T94tEz-/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "asw-prosedur-5",
@@ -502,7 +620,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Sensor AKS",
-    url: "https://docs.google.com/presentation/d/10VuLulFhx8P5hCxt-_Sh1dcnCy-Wi6kh/present?slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1it1CoJTYkVGpDJ-SugfpYzxieJ8bPKOB/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/10VuLulFhx8P5hCxt-_Sh1dcnCy-Wi6kh/present?slide=id.p1",
+    },
   },
   {
     id: "asw-prosedur-6",
@@ -511,7 +632,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Kerjasama Taktis AKS",
-    url: "https://docs.google.com/presentation/d/1kuuyR5WHaGM7cz46e69Ogz9AnAJMUvpo/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1-Mn1JqusyK1_J1DRpHQJqiimqcboHe-c/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1kuuyR5WHaGM7cz46e69Ogz9AnAJMUvpo/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "asw-prosedur-7",
@@ -520,7 +644,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Aksi AKS",
-    url: "https://docs.google.com/presentation/d/1txzhbiAYg4WoBHni4Cn3f62bBeM-Yx7k/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1xMd0CkTkzt2StyUieAcj4JJf52a5YtXL/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1txzhbiAYg4WoBHni4Cn3f62bBeM-Yx7k/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "asw-prosedur-8",
@@ -529,7 +656,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Anti Ship Torpedo Defence (ASTD)",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1iEyyic3fRYndwmzVt7nhG0Vc9wLR9oY3/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asw-prosedur-9",
@@ -538,7 +668,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "SAU/ASAU",
-    url: "https://docs.google.com/presentation/d/16NTm94oWeylQhDbXkcw_eK6kvQwnZPS8/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1_RXmNCNvBjoJb5-3eaoGbmugyIzPGS35/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/16NTm94oWeylQhDbXkcw_eK6kvQwnZPS8/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "asw-prosedur-10",
@@ -547,7 +680,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Tabir AKS",
-    url: "https://docs.google.com/presentation/d/14A67neEZK5LM6rOFI2lYrVTWqmwQN39F/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
+    links: {
+      module: "https://drive.google.com/file/d/1wYNs3uH0Y0fVeLYruRKZacEmjyT2fKmJ/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/14A67neEZK5LM6rOFI2lYrVTWqmwQN39F/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
+    },
   },
   {
     id: "asw-prosedur-11",
@@ -556,7 +692,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Kodal AKS",
-    url: "https://docs.google.com/presentation/d/13hcT-GzdjPEKK8ASA8zw3n9Y66SeyJEW/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/19JYsg1siUtZHcI87it-vwiGGPy9xbYk4/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/13hcT-GzdjPEKK8ASA8zw3n9Y66SeyJEW/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "asw-prosedur-12",
@@ -565,7 +704,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Introduksi Coordinated Anti Submarine Exercise (CASEX)",
-    url: "https://docs.google.com/presentation/d/1enQss_IVxiuH78NY57tT6nQT573sWDTd/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "",
+      lessons: "https://docs.google.com/presentation/d/1enQss_IVxiuH78NY57tT6nQT573sWDTd/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "asw-prosedur-13",
@@ -574,7 +716,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Water Space Management (WSM)",
-    url: "https://docs.google.com/presentation/d/1CMh9AzcgUDcSJYArFCCmJFL4EFlfevYB/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "",
+      lessons: "https://docs.google.com/presentation/d/1CMh9AzcgUDcSJYArFCCmJFL4EFlfevYB/present?slide=id.p1#slide=id.p1",
+    },
   },
 
   // Penggunaan Senjata AKS
@@ -585,7 +730,10 @@ const MATERIALS = [
     chapter: "PENGGUNAAN SENJATA AKS",
     type: "MODUL",
     title: "Penggunaan Torpedo",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1vbJVraywqBhuGGzYfUa72biUaLj4T3q6/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asw-senjata-2",
@@ -594,7 +742,10 @@ const MATERIALS = [
     chapter: "PENGGUNAAN SENJATA AKS",
     type: "MODUL",
     title: "Penggunaan Roket dan Bom AKS",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1wALs_BtS62CtqgFk8nsQ9HtOxMUYHQey/view?usp=sharing",
+      lessons: "",
+    },
   },
 
   // Operasi Kapal Selam
@@ -605,7 +756,10 @@ const MATERIALS = [
     chapter: "OPERASI KAPAL SELAM",
     type: "MODUL",
     title: "Taktik KS",
-    url: "https://docs.google.com/presentation/d/1xpEeI8sfM2CUTtzRhC0hnnjLKzN6RNNC/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1w5tzatrHbdjT5H5wkqxtViPsgr0z7UVi/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "asw-kasel-2",
@@ -614,7 +768,10 @@ const MATERIALS = [
     chapter: "OPERASI KAPAL SELAM",
     type: "MODUL",
     title: "Pengoperasian KS",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1w5tzatrHbdjT5H5wkqxtViPsgr0z7UVi/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1xpEeI8sfM2CUTtzRhC0hnnjLKzN6RNNC/present?slide=id.p1#slide=id.p1",
+    },
   },
 
   // Latihan Simulasi Peperangan AKS
@@ -625,7 +782,10 @@ const MATERIALS = [
     chapter: "LATIHAN SIMULASI PEPERANGAN AKS",
     type: "MODUL",
     title: "Latihan Simulasi Peperangan AKS",
-    url: "https://docs.google.com/presentation/d/1enQss_IVxiuH78NY57tT6nQT573sWDTd/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "",
+      lessons: "https://docs.google.com/presentation/d/1enQss_IVxiuH78NY57tT6nQT573sWDTd/present?slide=id.p1#slide=id.p1",
+    },
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -639,7 +799,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS PAU",
     type: "MODUL",
     title: "Introduksi PAU",
-    url: "",
+    links: {
+      module: "",
+      lessons: "https://docs.google.com/presentation/d/13dZalPLHI-u8it7opyKWaTZR_5nxTIQC/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
+    },
   },
   {
     id: "aaw-prosedur-2",
@@ -648,7 +811,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS PAU",
     type: "MODUL",
     title: "Perencanaan Operasi PAU",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1J4RVH8q2vAMN-k8BT1s-PoygVATHIX2Z/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1tqhaPWHfi-g0J6ZlcwvC5WEkIHrS8D4B/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "aaw-prosedur-3",
@@ -657,7 +823,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS PAU",
     type: "MODUL",
     title: "Gambaran Taktis PAU",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1OKuq7gc_H8wLzn_JfMXXdDeD5qC97HPd/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1jiVo_AZMTMb3I9-USyDpw23MB2jAkqkI/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
+    },
   },
   {
     id: "aaw-prosedur-4",
@@ -666,7 +835,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS PAU",
     type: "MODUL",
     title: "Proskomtis PAU",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1I6Mj22Mf4JsAnKVr6nP-7ZLKWdCWy3SD/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "aaw-prosedur-5",
@@ -675,7 +847,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS PAU",
     type: "MODUL",
     title: "Sensor PAU",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1q4z7DcKtglyjKgoSLf1MwuwnabcbAUAi/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "aaw-prosedur-6",
@@ -684,7 +859,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS PAU",
     type: "MODUL",
     title: "Kerjasama Taktis Pesud dan KAA",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1d44DbkhulCmdfuQ7xNsUvOJ4OVuxiVfY/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/12Qvy_UkV6bm8Sbw_-LGZtz4BPtvoAe7B/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "aaw-prosedur-7",
@@ -693,7 +871,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS PAU",
     type: "MODUL",
     title: "Kodal PAU",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1qDVZsTCpTfllDabzmcmT0US94mrk9BIg/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "aaw-prosedur-8",
@@ -702,7 +883,10 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS PAU",
     type: "MODUL",
     title: "Weapon Coordination",
-    url: "",
+    links: {
+      module: "",
+      lessons: "https://docs.google.com/presentation/d/1X5O1aosMIIYfZVG0cRmXUnCXAfBmX4vQ/present?slide=id.p1#slide=id.p1",
+    },
   },
 
   // Anti Ship Missile Defence (ASMD)
@@ -713,7 +897,10 @@ const MATERIALS = [
     chapter: "ANTI SHIP MISSILE DEFENCE (ASMD)",
     type: "MODUL",
     title: "ASMD Unit",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1nElifGIu2aKxNXimi0knGOJwjT04AXV0/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "aaw-asmd-2",
@@ -722,7 +909,10 @@ const MATERIALS = [
     chapter: "ANTI SHIP MISSILE DEFENCE (ASMD)",
     type: "MODUL",
     title: "ASMD Gugus Tugas",
-    url: "https://docs.google.com/presentation/d/16jGeuIHsXobmziZmSGm7yddo2L7egKOB/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1_dMzR6KBeRZpzwLon6O3aQX1n7tBooGp/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/16jGeuIHsXobmziZmSGm7yddo2L7egKOB/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "aaw-asmd-3",
@@ -731,7 +921,10 @@ const MATERIALS = [
     chapter: "ANTI SHIP MISSILE DEFENCE (ASMD)",
     type: "MODUL",
     title: "Zippo System",
-    url: "https://docs.google.com/presentation/d/1t1CqXtv7D3BbMPEozO68Q6kaABG5X7fP/present?slide=id.p4#slide=id.p4",
+    links: {
+      module: "",
+      lessons: "https://docs.google.com/presentation/d/1t1CqXtv7D3BbMPEozO68Q6kaABG5X7fP/present?slide=id.p4#slide=id.p4",
+    },
   },
 
   // Penggunaan Senjata Anti Udara
@@ -742,7 +935,10 @@ const MATERIALS = [
     chapter: "PENGGUNAAN SENJATA ANTI UDARA",
     type: "MODUL",
     title: "Penggunaan Meriam Anti Udara",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/10HN2u0V6OELkoLJ3IM5mGEfpHt33nYcs/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "aaw-senjata-2",
@@ -751,7 +947,10 @@ const MATERIALS = [
     chapter: "PENGGUNAAN SENJATA ANTI UDARA",
     type: "MODUL",
     title: "Penggunaan Rudal Anti Udara",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1R96kQhtUVZ_PcarJpQj_fFcf9wrTp8a7/view?usp=sharing",
+      lessons: "",
+    },
   },
   {
     id: "aaw-senjata-3",
@@ -760,7 +959,10 @@ const MATERIALS = [
     chapter: "PENGGUNAAN SENJATA ANTI UDARA",
     type: "MODUL",
     title: "Penggunaan Decoy",
-    url: "https://docs.google.com/presentation/d/1wbJi-5aSm8ArDcOtnCKXf3QUSYAGts7h/present?slide=id.p1#slide=id.p1",
+    links: {
+      module: "https://drive.google.com/file/d/1YRA6oM9Sj8qqDoEvbAiKjkvVCdzL5iRN/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1wbJi-5aSm8ArDcOtnCKXf3QUSYAGts7h/present?slide=id.p1#slide=id.p1",
+    },
   },
 
   // Latihan Simulasi Peperangan PAU
@@ -771,7 +973,10 @@ const MATERIALS = [
     chapter: "LATIHAN SIMULASI PEPERANGAN PAU",
     type: "MODUL",
     title: "Latihan Simulasi Peperangan PAU",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -785,7 +990,10 @@ const MATERIALS = [
     chapter: "DASAR PERNIKA",
     type: "MODUL",
     title: "Gelombang Elektromagnetik",
-    url: "",
+    links: {
+      module: "https://docs.google.com/presentation/d/12mTg6PP-A1qfrOKUeVwcJKLLAdPNguJU/present?slide=id.p1#slide=id.p1",
+      lessons: "https://drive.google.com/file/d/1-__QOYOoVgRXNvcaUStBKVWjQZXUJmkN/view?usp=sharing",
+    },
   },
   {
     id: "ew-dasar-2",
@@ -794,7 +1002,10 @@ const MATERIALS = [
     chapter: "DASAR PERNIKA",
     type: "MODUL",
     title: "Teori Radar",
-    url: "",
+    links: {
+      module: "",
+      lessons: "https://docs.google.com/presentation/d/1glQmxNWxaYZWYT_Dq2X67F2oP0OTSX1V/present?rtpof=true&slide=id.p1",
+    },
   },
 
   // Pernika
@@ -805,7 +1016,10 @@ const MATERIALS = [
     chapter: "PERNIKA",
     type: "MODUL",
     title: "Electronic Support (ES)",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/10y8VOlSAhOVCiNLQfSJ5OLRy2gEieSxv/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1KVtcNN6EF3K-FOyVpaxzxrdiTNgj0AMP/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "ew-pernika-2",
@@ -814,7 +1028,10 @@ const MATERIALS = [
     chapter: "PERNIKA",
     type: "MODUL",
     title: "Electronic Attack (EA)",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1HdQkO46b4AtKD1tIMh0j8yFcbwmjlwSp/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/19bsbLSsAhgm7VPkmJavjwL1iVT5u1M-g/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "ew-pernika-3",
@@ -823,7 +1040,10 @@ const MATERIALS = [
     chapter: "PERNIKA",
     type: "MODUL",
     title: "Electronic Protective (EP)",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1thvNlRKpT98ZygTgSDjc--1n5u26fU3r/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1s9D-qMz01ypcJRajZLcUJ4DZwtMVc6Xp/present?slide=id.p1#slide=id.p1",
+    },
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -836,7 +1056,10 @@ const MATERIALS = [
     chapter: "PEPERANGAN RANJAU",
     type: "MODUL",
     title: "Introduksi Peperangan Ranjau",
-    url: "",
+    links: {
+      module: "https://drive.google.com/file/d/1OgTVSgcloZ5Iku7yqDVt4ftZkb6fygKI/view?usp=sharing",
+      lessons: "https://docs.google.com/presentation/d/1jGREtXKcmLD7GCD_aVzBCBp5zReZeHGh/present?slide=id.p1#slide=id.p1",
+    },
   },
   {
     id: "mw-2",
@@ -845,7 +1068,10 @@ const MATERIALS = [
     chapter: "PEPERANGAN RANJAU",
     type: "MODUL",
     title: "Tindakan Perlawanan Ranjau",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -859,7 +1085,10 @@ const MATERIALS = [
     chapter: "WARFARE TACTICS MANUAL",
     type: "REFERENSI",
     title: "Royal Navy IPWO Handbook - Maritime Tactical Command & Warfare Principles",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
   {
     id: "ref-ipwo-2",
@@ -868,7 +1097,10 @@ const MATERIALS = [
     chapter: "AIR DEFENCE & TASK FORCE OPS",
     type: "MODUL",
     title: "IPWO UK Doctrine - Fleet Air Defence & Battle Group Integration",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
 
   // CCO BELANDA
@@ -879,7 +1111,10 @@ const MATERIALS = [
     chapter: "COMMAND & CONTROL DOCTRINE",
     type: "REFERENSI",
     title: "Royal Netherlands Navy CCO Manual - Command & Control Officer Operations",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
   {
     id: "ref-cco-2",
@@ -888,7 +1123,10 @@ const MATERIALS = [
     chapter: "COMBAT INFORMATION CENTER",
     type: "BAHAN AJAR",
     title: "CCO Netherlands Navy - Combat Information Center (CIC) Organization & SOP",
-    url: "",
+    links: {
+      module: "",
+      lessons: "",
+    },
   },
 ];
 
@@ -1094,30 +1332,88 @@ function filteredMaterials() {
   });
 }
 
+const LINK_LABELS = {
+  module: "MODULE (PI)",
+  lessons: "LESSONS",
+};
+
+function getDocumentLinks(item) {
+  const result = [];
+
+  if (Array.isArray(item.links)) {
+    for (const entry of item.links) {
+      if (entry && typeof entry.url === "string" && entry.url.trim().length > 0) {
+        result.push({
+          key: (entry.key || entry.label || "").toLowerCase(),
+          label: (entry.label || "BUKA DOKUMEN").toUpperCase(),
+          url: entry.url.trim(),
+        });
+      }
+    }
+  } else if (item.links && typeof item.links === "object") {
+    for (const [key, value] of Object.entries(item.links)) {
+      if (typeof value === "string" && value.trim().length > 0) {
+        result.push({
+          key: key.toLowerCase(),
+          label: LINK_LABELS[key] || key.toUpperCase(),
+          url: value.trim(),
+        });
+      }
+    }
+  } else if (typeof item.url === "string" && item.url.trim().length > 0) {
+    result.push({
+      key: "module",
+      label: "BUKA DOKUMEN",
+      url: item.url.trim(),
+    });
+  }
+
+  return result;
+}
+
 function makeDocumentCard(item, index) {
   const card = makeElement("article", "document-card");
   const number = makeElement("span", "document-index", String(index + 1).padStart(2, "0"));
   number.setAttribute("aria-hidden", "true");
   const title = makeElement("h2", "document-title", item.title);
 
-  const hasLink = Boolean(item.url && item.url.trim().length > 0);
-  const action = makeElement(hasLink ? "a" : "span", `document-action ${hasLink ? "is-linked" : "is-disabled"}`);
-  const label = makeElement("span", "document-action__label", hasLink ? "BUKA DOKUMEN" : "BELUM TERSEDIA");
-  const icon = makeElement("span", "document-action__icon");
-  icon.setAttribute("aria-hidden", "true");
-  icon.append(makeElement("span", "", hasLink ? "↗" : "—"));
-  action.append(label, icon);
+  const actions = makeElement("div", "document-actions");
+  const links = getDocumentLinks(item);
 
-  if (hasLink) {
-    action.href = item.url;
-    action.target = "_blank";
-    action.rel = "noopener noreferrer";
+  if (links.length > 0) {
+    links.forEach((link, idx) => {
+      const isSecondary = links.length > 1 && idx > 0;
+      const action = makeElement(
+        "a",
+        `document-action is-linked${isSecondary ? " is-secondary" : ""}`,
+      );
+      action.href = link.url;
+      action.target = "_blank";
+      action.rel = "noopener noreferrer";
+
+      const label = makeElement("span", "document-action__label", link.label);
+      const icon = makeElement("span", "document-action__icon");
+      icon.setAttribute("aria-hidden", "true");
+      icon.append(makeElement("span", "", "↗"));
+
+      action.append(label, icon);
+      actions.append(action);
+    });
   } else {
-    action.setAttribute("aria-disabled", "true");
-    action.title = "Dokumen ini belum memiliki tautan";
+    const disabled = makeElement("span", "document-action is-disabled");
+    disabled.setAttribute("aria-disabled", "true");
+    disabled.title = "Dokumen ini belum memiliki tautan";
+
+    const label = makeElement("span", "document-action__label", "BELUM TERSEDIA");
+    const icon = makeElement("span", "document-action__icon");
+    icon.setAttribute("aria-hidden", "true");
+    icon.append(makeElement("span", "", "—"));
+
+    disabled.append(label, icon);
+    actions.append(disabled);
   }
 
-  card.append(number, title, action);
+  card.append(number, title, actions);
   return card;
 }
 
