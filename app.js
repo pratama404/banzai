@@ -176,7 +176,7 @@ const MATERIALS = [
     chapter: "MANAJEMEN TEMPUR",
     type: "MODUL",
     title: "Dinas Informasi Tempur",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1wAgSmnyXkYHisadrwWVHnS0nLtEB0Zls/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "gw-manajemen-2",
@@ -185,7 +185,7 @@ const MATERIALS = [
     chapter: "MANAJEMEN TEMPUR",
     type: "MODUL",
     title: "Aturan Pelibatan (ROE)",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1rCt_dSNpU0gGqZAKX8fmMWf6XGygwkIg/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "gw-manajemen-3",
@@ -194,7 +194,7 @@ const MATERIALS = [
     chapter: "MANAJEMEN TEMPUR",
     type: "MODUL",
     title: "Laporan Sergapan (Raid Reporting)",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1bhbsUlJp7efF1MRlkrojPvLe7tZFtvUu/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
   },
   {
     id: "gw-manajemen-4",
@@ -203,7 +203,7 @@ const MATERIALS = [
     chapter: "MANAJEMEN TEMPUR",
     type: "MODUL",
     title: "Command, Control, Computer, Communication, Cyber, Intelligence, Surveillance and Reconnaissance (C5ISR)",
-    url: "",
+    url: "https://docs.google.com/presentation/d/19gXes1ZQ1eVO_DY6X8lY7LiHrhRilE9V/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
   },
   {
     id: "gw-manajemen-5",
@@ -212,7 +212,7 @@ const MATERIALS = [
     chapter: "MANAJEMEN TEMPUR",
     type: "MODUL",
     title: "Peperangan Asimetris",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1Cq24LjG6nw2wahhihLYgoNa423QvQo96/present?slide=id.p1#slide=id.p1",
   },
 
   // Informasi Tempur
@@ -223,7 +223,7 @@ const MATERIALS = [
     chapter: "INFORMASI TEMPUR",
     type: "MODUL",
     title: "Pengenalan (Recognition)",
-    url: "",
+    url: "https://drive.google.com/drive/folders/1Pko0sAg2i-a4-wfDjiDaJGqYHlp26VWT",
   },
   {
     id: "gw-informasi-2",
@@ -232,7 +232,7 @@ const MATERIALS = [
     chapter: "INFORMASI TEMPUR",
     type: "MODUL",
     title: "Kemampuan Regional (Regcap)",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1PRAvp0quaPmu6WEUWVX1p5yRawMWmn0w/present?slide=id.p1",
   },
   {
     id: "gw-informasi-3",
@@ -241,7 +241,7 @@ const MATERIALS = [
     chapter: "INFORMASI TEMPUR",
     type: "MODUL",
     title: "Intelijen Maritim",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1wAgSmnyXkYHisadrwWVHnS0nLtEB0Zls/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "gw-informasi-4",
@@ -273,7 +273,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Introduksi AKPA",
-    url: "",
+    url: "https://drive.google.com/drive/folders/1GSqBUNa_jHjSmbHmwCvCNdCoQC0Dv41w",
   },
   {
     id: "asuw-prosedur-2",
@@ -392,7 +392,7 @@ const MATERIALS = [
     chapter: "PENGGUNAAN SENJATA AKPA",
     type: "MODUL",
     title: "Penggunaan Meriam AKPA dan BTK",
-    url: "",
+    url: "https://drive.google.com/file/d/1HpclmHSImTu-3JLbC3S4bVstCCbyNnWr/view?usp=sharing",
   },
   {
     id: "asuw-senjata-2",
@@ -466,7 +466,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Introduksi AKS",
-    url: "",
+    url: "https://drive.google.com/file/d/1HpclmHSImTu-3JLbC3S4bVstCCbyNnWr/view?usp=sharing",
   },
   {
     id: "asw-prosedur-2",
@@ -475,7 +475,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Perencanaan Operasi AKS",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1y0nnJHBCBKpSBIBXw7NDQDldcIs6rlgl/present?slide=id.p1",
   },
   {
     id: "asw-prosedur-3",
@@ -484,7 +484,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Gambaran Taktis AKS",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1an6fhUKWD2ff5v2RJDHdCB2b-T94tEz-/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "asw-prosedur-4",
@@ -493,7 +493,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Proskomtis AKS",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1an6fhUKWD2ff5v2RJDHdCB2b-T94tEz-/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "asw-prosedur-5",
@@ -502,7 +502,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Sensor AKS",
-    url: "",
+    url: "https://docs.google.com/presentation/d/10VuLulFhx8P5hCxt-_Sh1dcnCy-Wi6kh/present?slide=id.p1",
   },
   {
     id: "asw-prosedur-6",
@@ -511,7 +511,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Kerjasama Taktis AKS",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1kuuyR5WHaGM7cz46e69Ogz9AnAJMUvpo/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "asw-prosedur-7",
@@ -520,7 +520,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Aksi AKS",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1txzhbiAYg4WoBHni4Cn3f62bBeM-Yx7k/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "asw-prosedur-8",
@@ -538,7 +538,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "SAU/ASAU",
-    url: "",
+    url: "https://docs.google.com/presentation/d/16NTm94oWeylQhDbXkcw_eK6kvQwnZPS8/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "asw-prosedur-10",
@@ -547,7 +547,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Tabir AKS",
-    url: "",
+    url: "https://docs.google.com/presentation/d/14A67neEZK5LM6rOFI2lYrVTWqmwQN39F/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
   },
   {
     id: "asw-prosedur-11",
@@ -556,7 +556,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Kodal AKS",
-    url: "",
+    url: "https://docs.google.com/presentation/d/13hcT-GzdjPEKK8ASA8zw3n9Y66SeyJEW/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "asw-prosedur-12",
@@ -565,7 +565,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Introduksi Coordinated Anti Submarine Exercise (CASEX)",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1enQss_IVxiuH78NY57tT6nQT573sWDTd/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "asw-prosedur-13",
@@ -574,7 +574,7 @@ const MATERIALS = [
     chapter: "PROSEDUR TAKTIS AKS",
     type: "MODUL",
     title: "Water Space Management (WSM)",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1CMh9AzcgUDcSJYArFCCmJFL4EFlfevYB/present?slide=id.p1#slide=id.p1",
   },
 
   // Penggunaan Senjata AKS
@@ -605,7 +605,7 @@ const MATERIALS = [
     chapter: "OPERASI KAPAL SELAM",
     type: "MODUL",
     title: "Taktik KS",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1xpEeI8sfM2CUTtzRhC0hnnjLKzN6RNNC/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "asw-kasel-2",
@@ -625,7 +625,7 @@ const MATERIALS = [
     chapter: "LATIHAN SIMULASI PEPERANGAN AKS",
     type: "MODUL",
     title: "Latihan Simulasi Peperangan AKS",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1enQss_IVxiuH78NY57tT6nQT573sWDTd/present?slide=id.p1#slide=id.p1",
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -722,7 +722,7 @@ const MATERIALS = [
     chapter: "ANTI SHIP MISSILE DEFENCE (ASMD)",
     type: "MODUL",
     title: "ASMD Gugus Tugas",
-    url: "",
+    url: "https://docs.google.com/presentation/d/16jGeuIHsXobmziZmSGm7yddo2L7egKOB/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "aaw-asmd-3",
@@ -731,7 +731,7 @@ const MATERIALS = [
     chapter: "ANTI SHIP MISSILE DEFENCE (ASMD)",
     type: "MODUL",
     title: "Zippo System",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1t1CqXtv7D3BbMPEozO68Q6kaABG5X7fP/present?slide=id.p4#slide=id.p4",
   },
 
   // Penggunaan Senjata Anti Udara
@@ -760,7 +760,7 @@ const MATERIALS = [
     chapter: "PENGGUNAAN SENJATA ANTI UDARA",
     type: "MODUL",
     title: "Penggunaan Decoy",
-    url: "",
+    url: "https://docs.google.com/presentation/d/1wbJi-5aSm8ArDcOtnCKXf3QUSYAGts7h/present?slide=id.p1#slide=id.p1",
   },
 
   // Latihan Simulasi Peperangan PAU
