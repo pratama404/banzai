@@ -7,11 +7,11 @@
  *     url: "https://drive.google.com/file/d/1234567890/view?usp=sharing"
  *
  * - Jika dokumen belum memiliki link, biarkan `url: ""` (string kosong).
- *   Sistem otomatis menampilkan status "BELUM ADA LINK" dan tombol
- *   "TIDAK BISA DIBUKA" (disabled) pada kartu dokumen.
+ *   Sistem otomatis menampilkan tombol "BELUM TERSEDIA" (nonaktif).
  *
  * - Untuk menambah materi baru, cukup copy salah satu blok objek di bawah
- *   lalu sesuaikan `subject`, `module`, `chapter`, `type`, `title`, dan `url`.
+ *   lalu sesuaikan `subject` (isi dengan nama sub-materi atau kategori utama),
+ *   `module`, `chapter`, `type`, `title`, dan `url`.
  * =========================================================================
  */
 
@@ -21,47 +21,75 @@ const CATEGORIES = [
     code: "1",
     name: "GENERAL WARFARE",
     short: "GW",
-    icon: "⚔",
-    desc: "Doktrin dasar peperangan laut, komando & kendali tempur, dan taktik operasi gabungan.",
-  },
-  {
-    id: "aaw",
-    code: "2",
-    name: "ANTI AIR WARFARE",
-    short: "AAW",
-    icon: "✈",
-    desc: "Pertahanan udara armada, deteksi dan pelacakan radar udara, serta prosedur reaksi cepat AAW.",
+    icon: "game-icons:crossed-swords",
+    desc: "Bahasa Inggris, Manajemen Tempur, dan Informasi Tempur.",
+    subcategories: [
+      { id: "gw-inggris", code: "1.1", name: "Bahasa Inggris", label: "Bahasa Inggris", short: "GW" },
+      { id: "gw-manajemen", code: "1.2", name: "Manajemen Tempur", label: "Manajemen Tempur", short: "GW" },
+      { id: "gw-informasi", code: "1.3", name: "Informasi Tempur", label: "Informasi Tempur", short: "GW" },
+    ],
   },
   {
     id: "asuw",
-    code: "3",
+    code: "2",
     name: "ANTI SURFACE WARFARE",
     short: "ASuW",
-    icon: "⚓",
-    desc: "Taktik peperangan permukaan, penembakan rudal antikapal, dan manuver operasi kapal kombatan.",
+    icon: "game-icons:battleship",
+    desc: "Prosedur Taktis AKPA, Penggunaan Senjata AKPA, Taktik FPB, dan Latihan Simulasi.",
+    subcategories: [
+      { id: "asuw-prosedur", code: "2.1", name: "Prosedur Taktis AKPA", label: "Prosedur Taktis AKPA", short: "ASuW" },
+      { id: "asuw-senjata", code: "2.2", name: "Penggunaan Senjata AKPA", label: "Penggunaan Senjata AKPA", short: "ASuW" },
+      { id: "asuw-fpb", code: "2.3", name: "Taktik Peperangan Fast Patrol Boat", label: "Taktik Peperangan Fast Patrol Boat", short: "ASuW" },
+      { id: "asuw-simulasi", code: "2.4", name: "Latihan Simulasi Peperangan AKPA", label: "Latihan Simulasi Peperangan AKPA", short: "ASuW" },
+    ],
   },
   {
     id: "asw",
-    code: "4",
+    code: "3",
     name: "ANTI SUBMARINE WARFARE",
     short: "ASW",
-    icon: "◉",
-    desc: "Deteksi sonar bawah air, taktik peperangan kapal selam, dan penggunaan senjata ASW.",
+    icon: "game-icons:submarine",
+    desc: "Pengaruh Alam AKS, Prosedur Taktis, Penggunaan Senjata, Operasi Kapal Selam, dan Simulasi.",
+    subcategories: [
+      { id: "asw-alam", code: "3.1", name: "Pengaruh Alam dalam AKS", label: "Pengaruh Alam dalam AKS", short: "ASW" },
+      { id: "asw-prosedur", code: "3.2", name: "Prosedur Taktis AKS", label: "Prosedur Taktis AKS", short: "ASW" },
+      { id: "asw-senjata", code: "3.3", name: "Penggunaan Senjata AKS", label: "Penggunaan Senjata AKS", short: "ASW" },
+      { id: "asw-kasel", code: "3.4", name: "Operasi Kapal Selam", label: "Operasi Kapal Selam", short: "ASW" },
+      { id: "asw-simulasi", code: "3.5", name: "Latihan Simulasi Peperangan AKS", label: "Latihan Simulasi Peperangan AKS", short: "ASW" },
+    ],
+  },
+  {
+    id: "aaw",
+    code: "4",
+    name: "ANTI AIR WARFARE",
+    short: "AAW",
+    icon: "game-icons:jet-fighter",
+    desc: "Prosedur Taktis PAU, ASMD, Penggunaan Senjata Anti Udara, dan Latihan Simulasi PAU.",
+    subcategories: [
+      { id: "aaw-prosedur", code: "4.1", name: "Prosedur Taktis PAU", label: "Prosedur Taktis PAU", short: "AAW" },
+      { id: "aaw-asmd", code: "4.2", name: "Anti Ship Missile Defence (ASMD)", label: "Anti Ship Missile Defence (ASMD)", short: "AAW" },
+      { id: "aaw-senjata", code: "4.3", name: "Penggunaan Senjata Anti Udara", label: "Penggunaan Senjata Anti Udara", short: "AAW" },
+      { id: "aaw-simulasi", code: "4.4", name: "Latihan Simulasi Peperangan PAU", label: "Latihan Simulasi Peperangan PAU", short: "AAW" },
+    ],
   },
   {
     id: "ew",
     code: "5",
     name: "ELECTRONIC WARFARE",
     short: "EW",
-    icon: "📡",
-    desc: "Peperangan elektronika, manajemen spektrum frekuensi, jamming, ESM, dan pertahanan ECM/ECCM.",
+    icon: "game-icons:radar-dish",
+    desc: "Dasar Pernika dan Pernika.",
+    subcategories: [
+      { id: "ew-dasar", code: "5.1", name: "Dasar Pernika", label: "Dasar Pernika", short: "EW" },
+      { id: "ew-pernika", code: "5.2", name: "Pernika", label: "Pernika", short: "EW" },
+    ],
   },
   {
     id: "mw",
     code: "6",
     name: "MINE WARFARE",
     short: "MW",
-    icon: "💥",
+    icon: "mdi:mine",
     desc: "Operasi ranjau laut, penyebaran ranjau, perburuan ranjau, dan Mine Countermeasures (MCM).",
   },
   {
@@ -69,25 +97,11 @@ const CATEGORIES = [
     code: "7",
     name: "REFERENSI UMUM LAINNYA",
     short: "REF",
-    icon: "▤",
+    icon: "game-icons:bookshelf",
     desc: "Kepustakaan dan referensi doktrin taktis militer internasional.",
     subcategories: [
-      {
-        id: "ipwo",
-        code: "7.1",
-        name: "7.1 IPWO INGGRIS",
-        label: "7.1 IPWO INGGRIS",
-        short: "IPWO",
-        icon: "🇬🇧",
-      },
-      {
-        id: "cco",
-        code: "7.2",
-        name: "7.2 CCO BELANDA",
-        label: "7.2 CCO BELANDA",
-        short: "CCO",
-        icon: "🇳🇱",
-      },
+      { id: "ipwo", code: "7.1", name: "7.1 IPWO INGGRIS", label: "IPWO INGGRIS", short: "IPWO" },
+      { id: "cco", code: "7.2", name: "7.2 CCO BELANDA", label: "CCO BELANDA", short: "CCO" },
     ],
   },
 ];
@@ -95,102 +109,166 @@ const CATEGORIES = [
 /**
  * MASTER DATABASE MATERI (HARDCODED)
  * Silakan edit atau tambahkan materi dan link Google Drive langsung di sini.
+ * Nilai `subject` disesuaikan dengan nama sub-materi (atau nama kategori utama jika tanpa sub-materi).
  */
 const MATERIALS = [
   // ─────────────────────────────────────────────────────────────
   // 1. GENERAL WARFARE (GW)
   // ─────────────────────────────────────────────────────────────
   {
+    id: "gw-inggris-1",
+    subject: "Bahasa Inggris",
+    module: "GENERAL WARFARE",
+    chapter: "BAHASA INGGRIS",
+    type: "MODUL",
+    title: "Bahasa Inggris Militer & Komunikasi Maritim PWO",
+    url: "",
+  },
+  {
     id: "gw-1",
-    subject: "GENERAL WARFARE",
+    subject: "Manajemen Tempur",
     module: "DOKTRIN OPERASI",
-    chapter: "OPERASI LAUT GABUNGAN",
+    chapter: "MANAJEMEN TEMPUR",
     type: "MODUL",
     title: "Doktrin Dasar Operasi Laut Gabungan & Taktik Tempur Armada",
-    url: "https://docs.google.com/presentation/d/1wAgSmnyXkYHisadrwWVHnS0nLtEB0Zls/present?slide=id.p1#slide=id.p1", // Isi link Drive di sini jika sudah ada
+    url: "https://docs.google.com/presentation/d/1wAgSmnyXkYHisadrwWVHnS0nLtEB0Zls/present?slide=id.p1#slide=id.p1",
   },
   {
     id: "gw-2",
-    subject: "GENERAL WARFARE",
+    subject: "Informasi Tempur",
     module: "KOMANDO & KENDALI",
-    chapter: "PROSEDUR C2",
+    chapter: "INFORMASI TEMPUR",
     type: "SOP",
     title: "SOP Komando & Kendali Tempur Kapal Kombatan",
     url: "https://docs.google.com/presentation/d/1rCt_dSNpU0gGqZAKX8fmMWf6XGygwkIg/present?slide=id.p1#slide=id.p1",
   },
 
   // ─────────────────────────────────────────────────────────────
-  // 2. ANTI AIR WARFARE (AAW)
-  // ─────────────────────────────────────────────────────────────
-  {
-    id: "aaw-1",
-    subject: "ANTI AIR WARFARE",
-    module: "TAKTIK AAW",
-    chapter: "PERTAHANAN UDARA ARMADA",
-    type: "MODUL",
-    title: "Modul Taktis AAW - Pertahanan Udara Gugus Tempur Laut",
-    url: "https://docs.google.com/presentation/d/1bhbsUlJp7efF1MRlkrojPvLe7tZFtvUu/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
-  },
-  {
-    id: "aaw-2",
-    subject: "ANTI AIR WARFARE",
-    module: "PROSEDUR REAKSI CEPAT",
-    chapter: "SASARAN CEPAT RENDAH",
-    type: "SOP",
-    title: "SOP Penembakan Rudal Pertahanan Udara & Meriam CIWS",
-    url: "https://docs.google.com/presentation/d/19gXes1ZQ1eVO_DY6X8lY7LiHrhRilE9V/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
-  },
-
-  // ─────────────────────────────────────────────────────────────
-  // 3. ANTI SURFACE WARFARE (ASuW)
+  // 2. ANTI SURFACE WARFARE (ASuW)
   // ─────────────────────────────────────────────────────────────
   {
     id: "asuw-1",
-    subject: "ANTI SURFACE WARFARE",
+    subject: "Prosedur Taktis AKPA",
     module: "TAKTIK ASUW",
-    chapter: "PROSEDUR PENEMBAKAN RUDAL",
+    chapter: "PROSEDUR TAKTIS AKPA",
     type: "MODUL",
     title: "Modul Taktis AsuW - Prosedur Penembakan Rudal Antikapal",
-    url: "https://docs.google.com/presentation/d/19gXes1ZQ1eVO_DY6X8lY7LiHrhRilE9V/present?usp=drive_web&ouid=109411807886520144132&rtpof=true", // Contoh link Drive aktif (silakan ganti dengan link file Anda)
+    url: "https://docs.google.com/presentation/d/19gXes1ZQ1eVO_DY6X8lY7LiHrhRilE9V/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
   },
   {
     id: "asuw-2",
-    subject: "ANTI SURFACE WARFARE",
+    subject: "Penggunaan Senjata AKPA",
     module: "PANDUAN OPERASI",
-    chapter: "TEMPUR LAUT COMBATANT",
+    chapter: "PENGGUNAAN SENJATA AKPA",
     type: "BAHAN AJAR",
     title: "Panduan Operasi Tempur Permukaan Kapal Kombatan",
     url: "",
   },
   {
     id: "asuw-3",
-    subject: "ANTI SURFACE WARFARE",
-    module: "KOMUNIKASI TAKTIS",
-    chapter: "KESIAPAN SENJATA",
+    subject: "Taktik Peperangan Fast Patrol Boat",
+    module: "TAKTIK FPB",
+    chapter: "FAST PATROL BOAT",
     type: "SOP",
-    title: "SOP Komunikasi Taktis dan Kesiapan Senjata Permukaan",
+    title: "Taktik Peperangan Fast Patrol Boat (FPB) & Manuver Serang Cepat",
+    url: "",
+  },
+  {
+    id: "asuw-4",
+    subject: "Latihan Simulasi Peperangan AKPA",
+    module: "SIMULASI AKPA",
+    chapter: "LATIHAN SIMULASI",
+    type: "MODUL",
+    title: "Skenario & Panduan Latihan Simulasi Peperangan AKPA",
     url: "",
   },
 
   // ─────────────────────────────────────────────────────────────
-  // 4. ANTI SUBMARINE WARFARE (ASW)
+  // 3. ANTI SUBMARINE WARFARE (ASW)
   // ─────────────────────────────────────────────────────────────
   {
     id: "asw-1",
-    subject: "ANTI SUBMARINE WARFARE",
-    module: "TAKTIK ASW",
-    chapter: "ANALISIS SONAR & AKUSTIK",
+    subject: "Pengaruh Alam dalam AKS",
+    module: "OSEANOGRAFI & AKUSTIK",
+    chapter: "PENGARUH ALAM AKS",
     type: "MODUL",
     title: "Modul Taktis ASW - Analisis Pola Deteksi Sonar Pasif & Aktif",
     url: "",
   },
   {
     id: "asw-2",
-    subject: "ANTI SUBMARINE WARFARE",
+    subject: "Prosedur Taktis AKS",
+    module: "TAKTIK ASW",
+    chapter: "PROSEDUR TAKTIS AKS",
+    type: "SOP",
+    title: "SOP Prosedur Taktis Pencarian & Pelacakan Kontak Bawah Air",
+    url: "",
+  },
+  {
+    id: "asw-3",
+    subject: "Penggunaan Senjata AKS",
     module: "PENYERANGAN ASW",
-    chapter: "PROSEDUR TORPEDO",
+    chapter: "PENGGUNAAN SENJATA AKS",
     type: "SOP",
     title: "SOP Pelacakan & Penyerangan Torpedo Terhadap Kontak Kapal Selam",
+    url: "",
+  },
+  {
+    id: "asw-4",
+    subject: "Operasi Kapal Selam",
+    module: "SUBMARINE OPS",
+    chapter: "OPERASI KAPAL SELAM",
+    type: "BAHAN AJAR",
+    title: "Doktrin & Taktik Operasi Kapal Selam dalam Peperangan Laut",
+    url: "",
+  },
+  {
+    id: "asw-5",
+    subject: "Latihan Simulasi Peperangan AKS",
+    module: "SIMULASI AKS",
+    chapter: "LATIHAN SIMULASI AKS",
+    type: "MODUL",
+    title: "Skenario & Panduan Latihan Simulasi Peperangan AKS",
+    url: "",
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 4. ANTI AIR WARFARE (AAW)
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: "aaw-1",
+    subject: "Prosedur Taktis PAU",
+    module: "TAKTIK AAW",
+    chapter: "PROSEDUR TAKTIS PAU",
+    type: "MODUL",
+    title: "Modul Taktis AAW - Pertahanan Udara Gugus Tempur Laut",
+    url: "https://docs.google.com/presentation/d/1bhbsUlJp7efF1MRlkrojPvLe7tZFtvUu/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
+  },
+  {
+    id: "aaw-asmd-1",
+    subject: "Anti Ship Missile Defence (ASMD)",
+    module: "ASMD",
+    chapter: "ANTI SHIP MISSILE DEFENCE",
+    type: "MODUL",
+    title: "Anti Ship Missile Defence (ASMD) — Prosedur Pertahanan Rudal Antikapal",
+    url: "",
+  },
+  {
+    id: "aaw-2",
+    subject: "Penggunaan Senjata Anti Udara",
+    module: "PROSEDUR REAKSI CEPAT",
+    chapter: "SENJATA ANTI UDARA",
+    type: "SOP",
+    title: "SOP Penembakan Rudal Pertahanan Udara & Meriam CIWS",
+    url: "https://docs.google.com/presentation/d/19gXes1ZQ1eVO_DY6X8lY7LiHrhRilE9V/present?usp=drive_web&ouid=109411807886520144132&rtpof=true",
+  },
+  {
+    id: "aaw-sim-1",
+    subject: "Latihan Simulasi Peperangan PAU",
+    module: "SIMULASI PAU",
+    chapter: "LATIHAN SIMULASI PAU",
+    type: "MODUL",
+    title: "Skenario & Panduan Latihan Simulasi Peperangan PAU",
     url: "",
   },
 
@@ -199,20 +277,20 @@ const MATERIALS = [
   // ─────────────────────────────────────────────────────────────
   {
     id: "ew-1",
-    subject: "ELECTRONIC WARFARE",
+    subject: "Dasar Pernika",
     module: "TAKTIK EW",
-    chapter: "ESM & JAMMING",
+    chapter: "DASAR PERNIKA",
     type: "MODUL",
-    title: "Modul Perang Elektronika - Deteksi ESM dan Taktik Active Jamming",
+    title: "Modul Perang Elektronika - Dasar Pernika, ESM & Spektrum Elektromagnetik",
     url: "",
   },
   {
     id: "ew-2",
-    subject: "ELECTRONIC WARFARE",
+    subject: "Pernika",
     module: "PERTAHANAN EW",
-    chapter: "PROSEDUR ECCM & CHAFF",
+    chapter: "PERNIKA",
     type: "SOP",
-    title: "SOP Penembakan Chaff / Decoy & Prosedur Lawan Elektronik (ECCM)",
+    title: "SOP Penembakan Chaff / Decoy, Jamming & Prosedur Lawan Elektronik (ECCM)",
     url: "",
   },
 
@@ -288,21 +366,42 @@ const documentGrid = document.querySelector("#document-grid");
 const documentTotal = document.querySelector("#document-total");
 const categoryTitle = document.querySelector("#category-title");
 const searchInput = document.querySelector("#search");
-const statusMessage = document.querySelector("#status-message");
 
-// Parse URL query parameter: ?cat=0..6, ?cat=gw, ?cat=7.1, etc.
+// Helper: find parent category of a given activeCategory name
+function findParentCategory(targetName) {
+  for (const cat of CATEGORIES) {
+    if (cat.name === targetName) return cat;
+    if (cat.subcategories && cat.subcategories.some((s) => s.name === targetName)) {
+      return cat;
+    }
+  }
+  return CATEGORIES[0];
+}
+
+// Parse URL query parameter: ?cat=0..6, ?cat=gw, ?cat=asuw, ?cat=7.1, ?cat=gw-inggris, etc.
 const urlParams = new URLSearchParams(window.location.search);
 const catParam = urlParams.get("cat");
 let initialCategory = CATEGORIES[0].name;
 
 if (catParam !== null) {
   const cleanParam = catParam.trim().toLowerCase();
-  if (cleanParam === "7.1" || cleanParam === "ipwo") {
-    initialCategory = "7.1 IPWO INGGRIS";
-  } else if (cleanParam === "7.2" || cleanParam === "cco") {
-    initialCategory = "7.2 CCO BELANDA";
-  } else if (cleanParam === "6" || cleanParam === "ref") {
-    initialCategory = "REFERENSI UMUM LAINNYA";
+  let matched = null;
+
+  // Check subcategories first (by id, code, or short)
+  for (const cat of CATEGORIES) {
+    if (cat.subcategories) {
+      const sub = cat.subcategories.find(
+        (s) => s.id === cleanParam || s.code === cleanParam,
+      );
+      if (sub) {
+        matched = sub.name;
+        break;
+      }
+    }
+  }
+
+  if (matched) {
+    initialCategory = matched;
   } else if (!isNaN(Number(cleanParam)) && CATEGORIES[Number(cleanParam)]) {
     initialCategory = CATEGORIES[Number(cleanParam)].name;
   } else {
@@ -317,6 +416,8 @@ if (catParam !== null) {
 }
 
 let activeCategory = initialCategory;
+const initialParent = findParentCategory(activeCategory);
+const expandedGroups = new Set(initialParent && initialParent.subcategories ? [initialParent.id] : []);
 
 function makeElement(tag, className, text) {
   const element = document.createElement(tag);
@@ -325,29 +426,26 @@ function makeElement(tag, className, text) {
   return element;
 }
 
-function itemMatchesCategory(item, targetCategory) {
-  const itemSubject = item.subject || "";
-  if (targetCategory === "REFERENSI UMUM LAINNYA") {
-    return (
-      itemSubject === "REFERENSI UMUM LAINNYA" ||
-      itemSubject === "7.1 IPWO INGGRIS" ||
-      itemSubject === "7.2 CCO BELANDA" ||
-      itemSubject.includes("IPWO") ||
-      itemSubject.includes("CCO") ||
-      itemSubject.includes("REFERENSI")
-    );
-  }
-  if (targetCategory === "7.1 IPWO INGGRIS") {
-    return itemSubject === "7.1 IPWO INGGRIS" || itemSubject.includes("IPWO");
-  }
-  if (targetCategory === "7.2 CCO BELANDA") {
-    return itemSubject === "7.2 CCO BELANDA" || itemSubject.includes("CCO");
-  }
-  return itemSubject === targetCategory;
+function makeIcon(iconName) {
+  const wrapper = makeElement("span", "category-icon");
+  wrapper.setAttribute("aria-hidden", "true");
+  const iconEl = document.createElement("iconify-icon");
+  iconEl.setAttribute("icon", iconName);
+  wrapper.append(iconEl);
+  return wrapper;
 }
 
-function countCategoryMaterials(categoryName) {
-  return MATERIALS.filter((item) => itemMatchesCategory(item, categoryName)).length;
+function itemMatchesCategory(item, targetCategory) {
+  const itemSubject = item.subject || "";
+  const mainCat = CATEGORIES.find((c) => c.name === targetCategory);
+  if (mainCat) {
+    if (itemSubject === mainCat.name) return true;
+    if (mainCat.subcategories) {
+      return mainCat.subcategories.some((sub) => itemSubject === sub.name);
+    }
+    return false;
+  }
+  return itemSubject === targetCategory;
 }
 
 function buildCategoryNav() {
@@ -356,35 +454,47 @@ function buildCategoryNav() {
 
   for (const category of CATEGORIES) {
     if (category.subcategories && category.subcategories.length > 0) {
-      // Category group (e.g. 7. REFERENSI UMUM LAINNYA)
-      const group = makeElement("div", "category-group");
+      const isOpen = expandedGroups.has(category.id);
+      const isMainActive = activeCategory === category.name;
+      const hasActiveChild = category.subcategories.some((s) => s.name === activeCategory);
+
+      const group = makeElement("div", `category-group${isOpen ? " is-open" : ""}`);
 
       const mainButton = makeElement("button", "category-button");
       mainButton.type = "button";
-      const isMainActive = activeCategory === category.name;
       mainButton.classList.toggle("is-active", isMainActive);
+      mainButton.classList.toggle("has-active-child", !isMainActive && hasActiveChild);
+      mainButton.setAttribute("aria-expanded", String(isOpen));
       mainButton.setAttribute("aria-pressed", String(isMainActive));
 
-      const count = countCategoryMaterials(category.name);
-      const icon = makeElement("span", "category-icon", category.icon);
-      icon.setAttribute("aria-hidden", "true");
+      const icon = makeIcon(category.icon);
+
+      const chevron = makeElement("span", "category-chevron", "▾");
+      chevron.setAttribute("aria-hidden", "true");
 
       mainButton.append(
         icon,
-        makeElement("span", "category-name", `${category.code}. ${category.name}`),
-        makeElement("span", "category-count", String(count).padStart(2, "0")),
+        makeElement("span", "category-name", category.name),
+        chevron,
       );
 
       mainButton.addEventListener("click", () => {
-        activeCategory = category.name;
-        if (searchInput) searchInput.value = "";
+        if (isOpen && isMainActive) {
+          expandedGroups.delete(category.id);
+        } else {
+          expandedGroups.add(category.id);
+          activeCategory = category.name;
+          if (searchInput) searchInput.value = "";
+        }
         renderLibrary();
       });
 
       group.append(mainButton);
 
-      // Subnav (7.1 & 7.2)
+      // Collapsible dropdown subnav
       const subNav = makeElement("div", "category-subnav");
+      const subNavInner = makeElement("div", "category-subnav-inner");
+
       for (const sub of category.subcategories) {
         const subButton = makeElement("button", "category-subbutton");
         subButton.type = "button";
@@ -392,43 +502,40 @@ function buildCategoryNav() {
         subButton.classList.toggle("is-active", isSubActive);
         subButton.setAttribute("aria-pressed", String(isSubActive));
 
-        const subCount = countCategoryMaterials(sub.name);
         const bullet = makeElement("span", "subnav-bullet", "↳");
         bullet.setAttribute("aria-hidden", "true");
 
         subButton.append(
           bullet,
           makeElement("span", "category-name", sub.label),
-          makeElement("span", "category-count", String(subCount).padStart(2, "0")),
         );
 
         subButton.addEventListener("click", () => {
+          expandedGroups.add(category.id);
           activeCategory = sub.name;
           if (searchInput) searchInput.value = "";
           renderLibrary();
         });
 
-        subNav.append(subButton);
+        subNavInner.append(subButton);
       }
 
+      subNav.append(subNavInner);
       group.append(subNav);
       categoryNav.append(group);
     } else {
-      // Regular category (1 s.d. 6)
+      // Category without subcategories (e.g. MINE WARFARE)
       const button = makeElement("button", "category-button");
       button.type = "button";
       const isActive = activeCategory === category.name;
       button.classList.toggle("is-active", isActive);
       button.setAttribute("aria-pressed", String(isActive));
 
-      const count = countCategoryMaterials(category.name);
-      const icon = makeElement("span", "category-icon", category.icon);
-      icon.setAttribute("aria-hidden", "true");
+      const icon = makeIcon(category.icon);
 
       button.append(
         icon,
-        makeElement("span", "category-name", `${category.code}. ${category.name}`),
-        makeElement("span", "category-count", String(count).padStart(2, "0")),
+        makeElement("span", "category-name", category.name),
       );
 
       button.addEventListener("click", () => {
@@ -455,64 +562,42 @@ function filteredMaterials() {
   });
 }
 
-function makeDocumentCard(item) {
+function makeDocumentCard(item, index) {
   const card = makeElement("article", "document-card");
-  const topLine = makeElement("div", "document-topline");
-  const type = makeElement("span", "document-type", item.type);
-  type.dataset.type = item.type;
-  topLine.append(type);
-
+  const number = makeElement("span", "document-index", String(index + 1).padStart(2, "0"));
+  number.setAttribute("aria-hidden", "true");
   const title = makeElement("h2", "document-title", item.title);
-  const path = makeElement("p", "document-path");
-  path.append(
-    document.createTextNode(`${item.module}  /  `),
-    makeElement("span", "", item.chapter),
-  );
-
-  const footer = makeElement("div", "document-footer");
-  const fileInfo = makeElement("span", "file-info");
-  fileInfo.append(makeElement("span", "pdf-icon", "▣"), document.createTextNode("GOOGLE DRIVE"));
 
   const hasLink = Boolean(item.url && item.url.trim().length > 0);
+  const action = makeElement(hasLink ? "a" : "span", `document-action ${hasLink ? "is-linked" : "is-disabled"}`);
+  const label = makeElement("span", "document-action__label", hasLink ? "BUKA DOKUMEN" : "BELUM TERSEDIA");
+  const icon = makeElement("span", "document-action__icon");
+  icon.setAttribute("aria-hidden", "true");
+  icon.append(makeElement("span", "", hasLink ? "↗" : "—"));
+  action.append(label, icon);
 
-  // Link status label
-  const linkState = makeElement(
-    "span",
-    `link-state${hasLink ? " is-linked" : " is-empty"}`,
-    hasLink ? "TAUTAN TERSEDIA" : "BELUM ADA LINK",
-  );
-
-  // Action button / disabled state
-  let action;
   if (hasLink) {
-    action = makeElement("a", "document-action is-linked", "BUKA DOKUMEN ↗");
     action.href = item.url;
     action.target = "_blank";
     action.rel = "noopener noreferrer";
   } else {
-    action = makeElement("span", "document-action is-disabled", "TIDAK BISA DIBUKA");
     action.setAttribute("aria-disabled", "true");
-    action.title = "Dokumen ini belum memiliki tautan Google Drive";
+    action.title = "Dokumen ini belum memiliki tautan";
   }
 
-  const meta = makeElement("span", "document-meta");
-  meta.append(fileInfo, linkState);
-  footer.append(meta, action);
-  card.append(topLine, title, path, footer);
-
+  card.append(number, title, action);
   return card;
 }
 
 function renderLibrary() {
   if (!documentGrid) return;
 
-  // Resolve active category title & subcode
   let displayTitle = activeCategory;
   let displaySuffix = "";
 
   const mainCategory = CATEGORIES.find((c) => c.name === activeCategory);
   if (mainCategory) {
-    displayTitle = `${mainCategory.code}. ${mainCategory.name}`;
+    displayTitle = mainCategory.name;
     displaySuffix = ` (${mainCategory.short})`;
   } else {
     for (const c of CATEGORIES) {
@@ -543,7 +628,7 @@ function renderLibrary() {
   documentGrid.replaceChildren();
 
   if (visible.length) {
-    visible.forEach((item) => documentGrid.append(makeDocumentCard(item)));
+    visible.forEach((item, i) => documentGrid.append(makeDocumentCard(item, i)));
     return;
   }
 
