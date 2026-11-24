@@ -9,21 +9,25 @@
   <title>Banzai 2026 | PWO Landing Base</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+  <script src="animations.js" defer></script>
 </head>
 
 <body class="landing-page">
 
   <!-- ══════ TOP BAR ══════ -->
   <header class="topbar topbar--transparent">
-    <a class="brand" href="index.html" aria-label="PWO Vademecum, beranda">
-      <img class="brand-logo" src="assets/logo/logo-pwo.png" alt="Logo PWO 2026">
-      <span class="brand-copy"><strong>PRINCIPAL WARFARE OFFICER</strong><small>E-REFERENCES · CLASS OF
-          2026</small></span>
-    </a>
-    <nav class="topbar-nav">
-      <a href="index.html" class="topbar-link is-active">BERANDA</a>
-      <a href="materi.html" class="topbar-link">MATERI</a>
-    </nav>
+      <a class="brand" href="/" aria-label="PWO Vademecum, beranda">
+        <img class="brand-logo" src="assets/logo/logo-pwo.png" alt="Logo PWO 2026">
+        <span class="brand-copy"><strong>PRINCIPAL WARFARE OFFICER</strong><small>E-REFERENCES · CLASS OF
+            2026</small></span>
+      </a>
+      <nav class="topbar-nav">
+        <a href="/" class="topbar-link is-active">BERANDA</a>
+        <a href="/materi" class="topbar-link">MATERI</a>
+      </nav>
   </header>
 
   <!-- ══════ HERO — FULL VIEWPORT WITH INTEGRATED SLOGANS ══════ -->
@@ -97,20 +101,6 @@
           make split-second tactical decisions under extreme pressure, and orchestrate
           every element of a naval task force into a unified and decisive fighting machine.
         </p>
-        <div class="about-stats">
-          <div class="about-stat">
-            <span class="about-stat__number">7</span>
-            <span class="about-stat__label">DISCIPLINES</span>
-          </div>
-          <div class="about-stat">
-            <span class="about-stat__number">2026</span>
-            <span class="about-stat__label">CLASS YEAR</span>
-          </div>
-          <div class="about-stat">
-            <span class="about-stat__number">∞</span>
-            <span class="about-stat__label">COMMITMENT</span>
-          </div>
-        </div>
       </div>
       <div class="about-section__image">
         <img src="assets/banzai-cover.jpg" alt="PWO 2026 Cover Art" loading="lazy">
@@ -128,89 +118,95 @@
 
       <div class="materi-grid">
         <!-- 1. GENERAL WARFARE -->
-        <a href="materi.html?cat=gw" class="materi-card">
-          <span class="materi-card__icon" aria-hidden="true"><iconify-icon
-              icon="game-icons:crossed-swords"></iconify-icon></span>
-          <h3 class="materi-card__title">1. GENERAL WARFARE</h3>
-          <p class="materi-card__code">GW</p>
-          <p class="materi-card__desc">Core naval warfare doctrine, combat command &amp; control (C2), and joint
-            operational tactics.</p>
-          <span class="materi-card__arrow" aria-hidden="true">→</span>
-        </a>
+          <a href="/materi?cat=gw" class="materi-card">
+            <span class="materi-card__icon" aria-hidden="true"><iconify-icon
+                icon="game-icons:crossed-swords"></iconify-icon></span>
+            <h3 class="materi-card__title">1. GENERAL WARFARE</h3>
+            <p class="materi-card__code">GW</p>
+            <p class="materi-card__desc">Core naval warfare doctrine, combat command &amp; control (C2), and joint
+              operational tactics.</p>
+            <span class="materi-card__arrow" aria-hidden="true">→</span>
+          </a>
 
-        <!-- 2. ANTI AIR WARFARE -->
-        <a href="materi.html?cat=aaw" class="materi-card">
-          <span class="materi-card__icon" aria-hidden="true"><iconify-icon
-              icon="game-icons:jet-fighter"></iconify-icon></span>
-          <h3 class="materi-card__title">2. ANTI AIR WARFARE</h3>
-          <p class="materi-card__code">AAW</p>
-          <p class="materi-card__desc">Fleet air defense, airborne radar tracking, and rapid low-altitude target
-            engagement.</p>
-          <span class="materi-card__arrow" aria-hidden="true">→</span>
-        </a>
+          <!-- 2. ANTI AIR WARFARE -->
+            <a href="/materi?cat=aaw" class="materi-card">
+              <span class="materi-card__icon" aria-hidden="true"><iconify-icon
+                  icon="game-icons:jet-fighter"></iconify-icon></span>
+              <h3 class="materi-card__title">2. ANTI AIR WARFARE</h3>
+              <p class="materi-card__code">AAW</p>
+              <p class="materi-card__desc">Fleet air defense, airborne radar tracking, and rapid low-altitude target
+                engagement.</p>
+              <span class="materi-card__arrow" aria-hidden="true">→</span>
+            </a>
 
-        <!-- 3. ANTI SURFACE WARFARE -->
-        <a href="materi.html?cat=asuw" class="materi-card">
-          <span class="materi-card__icon" aria-hidden="true"><iconify-icon
-              icon="game-icons:battleship"></iconify-icon></span>
-          <h3 class="materi-card__title">3. ANTI SURFACE WARFARE</h3>
-          <p class="materi-card__code">ASuW</p>
-          <p class="materi-card__desc">Surface warfare tactics, anti-ship missile engagement procedures, and combatant
-            operations.</p>
-          <span class="materi-card__arrow" aria-hidden="true">→</span>
-        </a>
+            <!-- 3. ANTI SURFACE WARFARE -->
+              <a href="/materi?cat=asuw" class="materi-card">
+                <span class="materi-card__icon" aria-hidden="true"><iconify-icon
+                    icon="game-icons:battleship"></iconify-icon></span>
+                <h3 class="materi-card__title">3. ANTI SURFACE WARFARE</h3>
+                <p class="materi-card__code">ASuW</p>
+                <p class="materi-card__desc">Surface warfare tactics, anti-ship missile engagement procedures, and
+                  combatant
+                  operations.</p>
+                <span class="materi-card__arrow" aria-hidden="true">→</span>
+              </a>
 
-        <!-- 4. ANTI SUBMARINE WARFARE -->
-        <a href="materi.html?cat=asw" class="materi-card">
-          <span class="materi-card__icon" aria-hidden="true"><iconify-icon
-              icon="game-icons:submarine"></iconify-icon></span>
-          <h3 class="materi-card__title">4. ANTI SUBMARINE WARFARE</h3>
-          <p class="materi-card__code">ASW</p>
-          <p class="materi-card__desc">Underwater sonar detection, acoustic analysis, and submarine attack procedures.
-          </p>
-          <span class="materi-card__arrow" aria-hidden="true">→</span>
-        </a>
+              <!-- 4. ANTI SUBMARINE WARFARE -->
+                <a href="/materi?cat=asw" class="materi-card">
+                  <span class="materi-card__icon" aria-hidden="true"><iconify-icon
+                      icon="game-icons:submarine"></iconify-icon></span>
+                  <h3 class="materi-card__title">4. ANTI SUBMARINE WARFARE</h3>
+                  <p class="materi-card__code">ASW</p>
+                  <p class="materi-card__desc">Underwater sonar detection, acoustic analysis, and submarine attack
+                    procedures.
+                  </p>
+                  <span class="materi-card__arrow" aria-hidden="true">→</span>
+                </a>
 
-        <!-- 5. ELECTRONIC WARFARE -->
-        <a href="materi.html?cat=ew" class="materi-card">
-          <span class="materi-card__icon" aria-hidden="true"><iconify-icon
-              icon="game-icons:radar-dish"></iconify-icon></span>
-          <h3 class="materi-card__title">5. ELECTRONIC WARFARE</h3>
-          <p class="materi-card__code">EW</p>
-          <p class="materi-card__desc">Electronic warfare operations, spectrum management, jamming, ESM, and ECCM
-            countermeasures.</p>
-          <span class="materi-card__arrow" aria-hidden="true">→</span>
-        </a>
+                <!-- 5. ELECTRONIC WARFARE -->
+                  <a href="/materi?cat=ew" class="materi-card">
+                    <span class="materi-card__icon" aria-hidden="true"><iconify-icon
+                        icon="game-icons:radar-dish"></iconify-icon></span>
+                    <h3 class="materi-card__title">5. ELECTRONIC WARFARE</h3>
+                    <p class="materi-card__code">EW</p>
+                    <p class="materi-card__desc">Electronic warfare operations, spectrum management, jamming, ESM, and
+                      ECCM
+                      countermeasures.</p>
+                    <span class="materi-card__arrow" aria-hidden="true">→</span>
+                  </a>
 
-        <!-- 6. MINE WARFARE -->
-        <a href="materi.html?cat=mw" class="materi-card">
-          <span class="materi-card__icon" aria-hidden="true"><iconify-icon icon="mdi:mine"></iconify-icon></span>
-          <h3 class="materi-card__title">6. MINE WARFARE</h3>
-          <p class="materi-card__code">MW</p>
-          <p class="materi-card__desc">Naval mine operations, safe navigation route clearance, and Mine Countermeasures
-            (MCM).</p>
-          <span class="materi-card__arrow" aria-hidden="true">→</span>
-        </a>
+                  <!-- 6. MINE WARFARE -->
+                    <a href="/materi?cat=mw" class="materi-card">
+                      <span class="materi-card__icon" aria-hidden="true"><iconify-icon
+                          icon="mdi:mine"></iconify-icon></span>
+                      <h3 class="materi-card__title">6. MINE WARFARE</h3>
+                      <p class="materi-card__code">MW</p>
+                      <p class="materi-card__desc">Naval mine operations, safe navigation route clearance, and Mine
+                        Countermeasures
+                        (MCM).</p>
+                      <span class="materi-card__arrow" aria-hidden="true">→</span>
+                    </a>
 
-        <!-- 7. GENERAL REFERENCES -->
-        <a href="materi.html?cat=ref" class="materi-card materi-card--wide">
-          <span class="materi-card__icon" aria-hidden="true"><iconify-icon
-              icon="game-icons:bookshelf"></iconify-icon></span>
-          <h3 class="materi-card__title">7. GENERAL REFERENCES</h3>
-          <p class="materi-card__code">REF</p>
-          <p class="materi-card__desc">International doctrine &amp; standard manuals for tactical cross-reference.</p>
-          <div class="materi-card-chips">
-            <span class="materi-chip">🇬🇧 7.1 IPWO INGGRIS</span>
-            <span class="materi-chip">🇳🇱 7.2 CCO BELANDA</span>
-          </div>
-          <span class="materi-card__arrow" aria-hidden="true">→</span>
-        </a>
+                    <!-- 7. GENERAL REFERENCES -->
+                      <a href="/materi?cat=ref" class="materi-card materi-card--wide">
+                        <span class="materi-card__icon" aria-hidden="true"><iconify-icon
+                            icon="game-icons:bookshelf"></iconify-icon></span>
+                        <h3 class="materi-card__title">7. GENERAL REFERENCES</h3>
+                        <p class="materi-card__code">REF</p>
+                        <p class="materi-card__desc">International doctrine &amp; standard manuals for tactical
+                          cross-reference.</p>
+                        <div class="materi-card-chips">
+                          <span class="materi-chip">🇬🇧 7.1 IPWO INGGRIS</span>
+                          <span class="materi-chip">🇳🇱 7.2 CCO BELANDA</span>
+                        </div>
+                        <span class="materi-card__arrow" aria-hidden="true">→</span>
+                      </a>
       </div>
 
       <div class="materi-preview__cta">
-        <a class="btn-primary" href="materi.html">
-          EXPLORE ALL MATERIALS <span aria-hidden="true">↗</span>
-        </a>
+          <a class="btn-primary" href="/materi">
+            EXPLORE ALL MATERIALS <span aria-hidden="true">↗</span>
+          </a>
       </div>
     </div>
   </section>

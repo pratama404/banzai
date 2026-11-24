@@ -1601,6 +1601,9 @@ function renderLibrary() {
     if (displaySuffix) {
       categoryTitle.append(makeElement("span", "", displaySuffix));
     }
+    if (categoryTitle.dataset.gsapSplit === "true" && typeof window.animateHeadingWords === "function") {
+      window.animateHeadingWords(categoryTitle, false);
+    }
   }
 
   buildCategoryNav();

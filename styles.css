@@ -414,30 +414,6 @@ a {
   margin: 0 0 16px;
 }
 
-.about-stats {
-  margin-top: 32px;
-  display: flex;
-  gap: 36px;
-}
-
-.about-stat {
-  text-align: center;
-}
-
-.about-stat__number {
-  display: block;
-  font: 700 clamp(28px, 3vw, 40px)/1 var(--heading);
-  color: var(--gold);
-}
-
-.about-stat__label {
-  margin-top: 6px;
-  display: block;
-  font: 600 9px var(--heading);
-  letter-spacing: .15em;
-  color: var(--muted);
-}
-
 .about-section__image {
   border: 1px solid #3a3230;
   overflow: hidden;
@@ -1689,6 +1665,33 @@ a {
   .footer span:last-child {
     width: 100%;
   }
+}
+
+/* ── Lenis Smooth Scroll & GSAP Word Reveal ── */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.word-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: .08em;
+  margin-bottom: -.08em;
+}
+
+.word-unit {
+  display: inline-block;
+  will-change: transform, opacity;
 }
 
 @media (prefers-reduced-motion: reduce) {
