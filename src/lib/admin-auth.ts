@@ -3,19 +3,13 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createServerSupabase } from "@/lib/supabase/server";
 
 export async function assertAdmin(): Promise<boolean> {
-  const cookieStore = await cookies();
-  if (cookieStore.get("pwo_session")?.value === "admin") return true;
-
   if (isSupabaseConfigured()) {
     const supabase = await createServerSupabase();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return false;
-    if (
-      user.app_metadata?.role === "admin" ||
-      user.user_metadata?.role === "admin"
-    ) {
+    if (user.app_metadata?.role === "admin") {
       return true;
     }
     const { data: profile } = await supabase
@@ -26,7 +20,8 @@ export async function assertAdmin(): Promise<boolean> {
     return profile?.role === "admin";
   }
 
-  return false;
+  const cookieStore = await cookies();
+  return cookieStore.get("pwo_session")?.value === "admin";
 }
 
 export function slugify(text: string): string {

@@ -10,9 +10,7 @@ interface MateriPageProps {
 
 export default async function MateriPage({ searchParams }: MateriPageProps) {
   const params = await searchParams;
-  const cookieStore = await cookies();
-  let userRole: "admin" | "user" =
-    cookieStore.get("pwo_session")?.value === "admin" ? "admin" : "user";
+  let userRole: "admin" | "user" = "user";
 
   if (isSupabaseConfigured()) {
     try {
@@ -22,10 +20,7 @@ export default async function MateriPage({ searchParams }: MateriPageProps) {
       } = await supabase.auth.getUser();
 
       if (user) {
-        if (
-          user.app_metadata?.role === "admin" ||
-          user.user_metadata?.role === "admin"
-        ) {
+        if (user.app_metadata?.role === "admin") {
           userRole = "admin";
         } else {
           const { data: profile } = await supabase
@@ -37,7 +32,12 @@ export default async function MateriPage({ searchParams }: MateriPageProps) {
         }
       }
     } catch {
-      // Fallback to cookie role
+      // Keep default "user" role on error
+    }
+  } else {
+    const cookieStore = await cookies();
+    if (cookieStore.get("pwo_session")?.value === "admin") {
+      userRole = "admin";
     }
   }
 

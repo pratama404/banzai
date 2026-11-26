@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. If Supabase is configured, authenticate against Supabase Auth
+    // 1. If Supabase is configured, strictly authenticate against Supabase Auth
     if (isSupabaseConfigured()) {
       const supabase = await createServerSupabase();
       const email = normalizeIdentifierToEmail(identifier);
@@ -25,34 +25,31 @@ export async function POST(request: Request) {
         password,
       });
 
-      if (!error && data.user) {
-        let role: "admin" | "user" =
-          data.user.app_metadata?.role === "admin" ||
-          data.user.user_metadata?.role === "admin"
-            ? "admin"
-            : "user";
-
-        if (role !== "admin") {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("role")
-            .eq("id", data.user.id)
-            .maybeSingle();
-          if (profile?.role === "admin") role = "admin";
-        }
-
-        const res = NextResponse.json({ ok: true, role, mode: "supabase" });
-        res.cookies.set("pwo_session", role, {
-          httpOnly: true,
-          sameSite: "lax",
-          path: "/",
-          maxAge: 60 * 60 * 24 * 7,
-        });
-        return res;
+      if (error || !data.user) {
+        return NextResponse.json(
+          { error: "Username/email atau password tidak valid." },
+          { status: 401 },
+        );
       }
+
+      let role: "admin" | "user" =
+        data.user.app_metadata?.role === "admin" ? "admin" : "user";
+
+      if (role !== "admin") {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", data.user.id)
+          .maybeSingle();
+        if (profile?.role === "admin") role = "admin";
+      }
+
+      const res = NextResponse.json({ ok: true, role, mode: "supabase" });
+      res.cookies.delete("pwo_session");
+      return res;
     }
 
-    // 2. Fallback fixed credentials (works before Supabase is configured, or as master fallback)
+    // 2. Fallback fixed credentials (ONLY used before Supabase is configured)
     const adminUser = (process.env.PWO_ADMIN_USER || "admin").toLowerCase();
     const adminPass = process.env.PWO_ADMIN_PASSWORD || "pwo2026admin";
     const studentUser = (process.env.PWO_STUDENT_USER || "pwo2026").toLowerCase();
@@ -76,6 +73,7 @@ export async function POST(request: Request) {
       res.cookies.set("pwo_session", matchedRole, {
         httpOnly: true,
         sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
         path: "/",
         maxAge: 60 * 60 * 24 * 7,
       });

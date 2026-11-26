@@ -17,14 +17,7 @@ export async function middleware(request: NextRequest) {
   let isAuthenticated = false;
   let userRole: "admin" | "user" = "user";
 
-  // Check fallback cookie session (also works when Supabase is not set up yet)
-  const fallbackCookie = request.cookies.get("pwo_session")?.value;
-  if (fallbackCookie === "admin" || fallbackCookie === "user") {
-    isAuthenticated = true;
-    userRole = fallbackCookie;
-  }
-
-  // If Supabase is configured, verify real Supabase Auth session
+  // If Supabase is configured, strictly verify real Supabase Auth session
   if (isSupabaseConfigured()) {
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -53,11 +46,7 @@ export async function middleware(request: NextRequest) {
 
     if (user) {
       isAuthenticated = true;
-      const metaRole =
-        (user.app_metadata?.role as string) ||
-        (user.user_metadata?.role as string) ||
-        userRole;
-      if (metaRole === "admin") {
+      if (user.app_metadata?.role === "admin") {
         userRole = "admin";
       } else {
         const { data: profile } = await supabase
@@ -69,6 +58,13 @@ export async function middleware(request: NextRequest) {
           userRole = "admin";
         }
       }
+    }
+  } else {
+    // Fallback cookie session is ONLY allowed when Supabase is not configured
+    const fallbackCookie = request.cookies.get("pwo_session")?.value;
+    if (fallbackCookie === "admin" || fallbackCookie === "user") {
+      isAuthenticated = true;
+      userRole = fallbackCookie;
     }
   }
 

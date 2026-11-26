@@ -139,6 +139,13 @@ create policy "Admins can manage materials"
   with check (public.is_admin());
 
 -- ============================================================================
+-- TABLE & FUNCTION PRIVILEGES (Required for PostgREST / service_role / authenticated)
+-- ============================================================================
+grant usage on schema public to anon, authenticated, service_role;
+grant select, insert, update, delete on table public.profiles, public.categories, public.subcategories, public.materials to authenticated, service_role;
+grant execute on function public.is_admin() to authenticated, service_role;
+
+-- ============================================================================
 -- SEED DATA: CATEGORIES
 -- ============================================================================
 insert into public.categories (id, code, name, short, icon, description, sort_order)
