@@ -14,6 +14,18 @@ interface MateriLibraryProps {
   userRole: "admin" | "user";
 }
 
+interface DocumentLink {
+  key: string;
+  label: string;
+  url: string;
+}
+
+interface PreviewState {
+  item: MaterialItem;
+  links: DocumentLink[];
+  activeIndex: number;
+}
+
 const LINK_LABELS: Record<string, string> = {
   module: "MODULE (PI)",
   lessons: "LESSONS",
@@ -55,8 +67,8 @@ function resolveInitialCategory(categories: Category[], catParam?: string): stri
   return found ? found.name : categories[0].name;
 }
 
-function getDocumentLinks(item: MaterialItem) {
-  const result: { key: string; label: string; url: string }[] = [];
+function getDocumentLinks(item: MaterialItem): DocumentLink[] {
+  const result: DocumentLink[] = [];
   if (item.links && typeof item.links === "object") {
     for (const [key, value] of Object.entries(item.links)) {
       if (typeof value === "string" && value.trim().length > 0) {
@@ -69,6 +81,41 @@ function getDocumentLinks(item: MaterialItem) {
     }
   }
   return result;
+}
+
+/**
+ * Converts Google Drive / Docs / Slides URLs into clean iframe preview URLs.
+ * Returns null for Drive folders or non-embeddable links (opens in new tab).
+ */
+function toEmbedPreviewUrl(rawUrl: string): string | null {
+  try {
+    const u = new URL(rawUrl);
+    if (u.pathname.includes("/drive/folders/")) return null;
+
+    const driveFile = rawUrl.match(/drive\.google\.com\/file\/d\/([^/?#]+)/i);
+    if (driveFile) {
+      return `https://drive.google.com/file/d/${driveFile[1]}/preview`;
+    }
+
+    const slides = rawUrl.match(/docs\.google\.com\/presentation\/d\/([^/?#]+)/i);
+    if (slides) {
+      return `https://docs.google.com/presentation/d/${slides[1]}/embed?start=false&loop=false&delayms=3000`;
+    }
+
+    const docs = rawUrl.match(/docs\.google\.com\/document\/d\/([^/?#]+)/i);
+    if (docs) {
+      return `https://docs.google.com/document/d/${docs[1]}/preview`;
+    }
+
+    const sheets = rawUrl.match(/docs\.google\.com\/spreadsheets\/d\/([^/?#]+)/i);
+    if (sheets) {
+      return `https://docs.google.com/spreadsheets/d/${sheets[1]}/preview`;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 export default function MateriLibrary({
@@ -92,8 +139,12 @@ export default function MateriLibrary({
     initialParent?.subcategories ? [initialParent.id] : [],
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchScope, setSearchScope] = useState<"all" | "category">("all");
+  const [preview, setPreview] = useState<PreviewState | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
   const isFirstRender = useRef(true);
+
+  const isGlobalSearchActive = Boolean(searchQuery.trim()) && searchScope === "all";
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -104,9 +155,26 @@ export default function MateriLibrary({
       delete titleRef.current.dataset.originalHtml;
       animateHeadingWords(titleRef.current, false);
     }
-  }, [activeCategory]);
+  }, [activeCategory, isGlobalSearchActive]);
+
+  useEffect(() => {
+    if (!preview) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPreview(null);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [preview]);
 
   const { displayTitle, displaySuffix } = useMemo(() => {
+    if (isGlobalSearchActive) {
+      return { displayTitle: "HASIL PENCARIAN", displaySuffix: " (SEMUA KATEGORI)" };
+    }
     const mainCategory = categories.find((c) => c.name === activeCategory);
     if (mainCategory) {
       return { displayTitle: mainCategory.name, displaySuffix: ` (${mainCategory.short})` };
@@ -120,26 +188,29 @@ export default function MateriLibrary({
       }
     }
     return { displayTitle: activeCategory, displaySuffix: "" };
-  }, [categories, activeCategory]);
+  }, [categories, activeCategory, isGlobalSearchActive]);
 
   const visibleMaterials = useMemo(() => {
     const query = searchQuery.trim().toLocaleLowerCase("id");
     const mainCat = categories.find((c) => c.name === activeCategory);
 
     return materials.filter((item) => {
-      const itemSubject = item.subject || "";
-      let matchesCat = false;
+      if (!(query && searchScope === "all")) {
+        const itemSubject = item.subject || "";
+        let matchesCat = false;
 
-      if (mainCat) {
-        if (itemSubject === mainCat.name) matchesCat = true;
-        else if (mainCat.subcategories) {
-          matchesCat = mainCat.subcategories.some((sub) => itemSubject === sub.name);
+        if (mainCat) {
+          if (itemSubject === mainCat.name) matchesCat = true;
+          else if (mainCat.subcategories) {
+            matchesCat = mainCat.subcategories.some((sub) => itemSubject === sub.name);
+          }
+        } else {
+          matchesCat = itemSubject === activeCategory;
         }
-      } else {
-        matchesCat = itemSubject === activeCategory;
+
+        if (!matchesCat) return false;
       }
 
-      if (!matchesCat) return false;
       if (!query) return true;
 
       const searchable = [item.subject, item.module, item.chapter, item.title, item.type]
@@ -147,13 +218,18 @@ export default function MateriLibrary({
         .toLocaleLowerCase("id");
       return searchable.includes(query);
     });
-  }, [materials, categories, activeCategory, searchQuery]);
+  }, [materials, categories, activeCategory, searchQuery, searchScope]);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
   }
+
+  const activePreviewLink = preview ? preview.links[preview.activeIndex] : null;
+  const activePreviewEmbed = activePreviewLink
+    ? toEmbedPreviewUrl(activePreviewLink.url)
+    : null;
 
   return (
     <>
@@ -208,9 +284,10 @@ export default function MateriLibrary({
             {categories.map((category) => {
               const hasSubs = Boolean(category.subcategories && category.subcategories.length > 0);
               const isOpen = expandedGroups.includes(category.id);
-              const isMainActive = activeCategory === category.name;
+              const isMainActive = !isGlobalSearchActive && activeCategory === category.name;
               const hasActiveChild = Boolean(
-                category.subcategories?.some((s) => s.name === activeCategory),
+                !isGlobalSearchActive &&
+                  category.subcategories?.some((s) => s.name === activeCategory),
               );
 
               if (hasSubs) {
@@ -250,7 +327,8 @@ export default function MateriLibrary({
                     <div className="category-subnav">
                       <div className="category-subnav-inner">
                         {category.subcategories!.map((sub) => {
-                          const isSubActive = activeCategory === sub.name;
+                          const isSubActive =
+                            !isGlobalSearchActive && activeCategory === sub.name;
                           return (
                             <button
                               key={sub.id}
@@ -304,25 +382,50 @@ export default function MateriLibrary({
         </aside>
 
         <section className="library" id="library" aria-labelledby="category-title">
-          <div className="search-row">
+          <div className="search-row search-row--with-scope">
             <label className="search-box">
               <span className="visually-hidden">Cari dokumen pelajaran</span>
               <input
                 id="search"
                 type="search"
-                placeholder="Cari dokumen pelajaran PWO..."
+                placeholder={
+                  searchScope === "all"
+                    ? "Cari di seluruh dokumen PWO..."
+                    : "Cari di kategori aktif..."
+                }
                 autoComplete="off"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <span className="search-icon" aria-hidden="true"></span>
             </label>
+
+            <div className="search-scope" role="group" aria-label="Cakupan pencarian">
+              <button
+                type="button"
+                className={`search-scope__btn${searchScope === "all" ? " is-active" : ""}`}
+                onClick={() => setSearchScope("all")}
+              >
+                SEMUA KATEGORI
+              </button>
+              <button
+                type="button"
+                className={`search-scope__btn${searchScope === "category" ? " is-active" : ""}`}
+                onClick={() => setSearchScope("category")}
+              >
+                KATEGORI AKTIF
+              </button>
+            </div>
           </div>
 
           <div className="section-heading">
             <div>
               <p className="eyebrow">PERPUSTAKAAN DIGITAL · PWO BANZAI 2026</p>
-              <h1 id="category-title" ref={titleRef} key={activeCategory}>
+              <h1
+                id="category-title"
+                ref={titleRef}
+                key={isGlobalSearchActive ? "__global__" : activeCategory}
+              >
                 {displayTitle}
                 {displaySuffix ? <span>{displaySuffix}</span> : null}
               </h1>
@@ -341,12 +444,16 @@ export default function MateriLibrary({
                     <span className="document-index" aria-hidden="true">
                       {String(index + 1).padStart(2, "0")}
                     </span>
+                    {isGlobalSearchActive ? (
+                      <span className="document-subject-tag">{item.subject}</span>
+                    ) : null}
                     <h2 className="document-title">{item.title}</h2>
 
                     <div className="document-actions">
                       {links.length > 0 ? (
                         links.map((link, idx) => {
                           const isSecondary = links.length > 1 && idx > 0;
+                          const canPreview = Boolean(toEmbedPreviewUrl(link.url));
                           return (
                             <a
                               key={link.key}
@@ -356,6 +463,23 @@ export default function MateriLibrary({
                               className={`document-action is-linked${
                                 isSecondary ? " is-secondary" : ""
                               }`}
+                              title={
+                                canPreview
+                                  ? `Pratinjau ${link.label} (Ctrl+Klik untuk tab baru)`
+                                  : `Buka ${link.label} di tab baru`
+                              }
+                              onClick={(e) => {
+                                if (
+                                  canPreview &&
+                                  !e.ctrlKey &&
+                                  !e.metaKey &&
+                                  !e.shiftKey &&
+                                  e.button === 0
+                                ) {
+                                  e.preventDefault();
+                                  setPreview({ item, links, activeIndex: idx });
+                                }
+                              }}
                             >
                               <span className="document-action__label">{link.label}</span>
                               <span className="document-action__icon" aria-hidden="true">
@@ -390,7 +514,7 @@ export default function MateriLibrary({
                 </h2>
                 <p>
                   {searchQuery.trim()
-                    ? "Coba kata kunci lain atau pilih kategori berbeda."
+                    ? "Coba kata kunci lain atau ubah cakupan pencarian."
                     : "Dokumen untuk kategori ini sedang dipersiapkan."}
                 </p>
               </div>
@@ -398,6 +522,91 @@ export default function MateriLibrary({
           </div>
         </section>
       </main>
+
+      {/* ══════ DOCUMENT PREVIEW MODAL ══════ */}
+      {preview && activePreviewLink ? (
+        <div
+          className="preview-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="preview-modal-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setPreview(null);
+          }}
+        >
+          <div className="preview-modal__dialog">
+            <div className="preview-modal__header">
+              <div className="preview-modal__meta">
+                <p className="eyebrow">{preview.item.subject}</p>
+                <h2 id="preview-modal-title" className="preview-modal__title">
+                  {preview.item.title}
+                </h2>
+              </div>
+
+              <div className="preview-modal__controls">
+                {preview.links.length > 1 ? (
+                  <div className="preview-modal__tabs">
+                    {preview.links.map((lnk, idx) => (
+                      <button
+                        key={lnk.key}
+                        type="button"
+                        className={`preview-modal__tab${
+                          idx === preview.activeIndex ? " is-active" : ""
+                        }`}
+                        onClick={() => setPreview({ ...preview, activeIndex: idx })}
+                      >
+                        {lnk.label}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+
+                <a
+                  href={activePreviewLink.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="preview-modal__ext"
+                >
+                  TAB BARU ↗
+                </a>
+
+                <button
+                  type="button"
+                  className="preview-modal__close"
+                  aria-label="Tutup pratinjau"
+                  onClick={() => setPreview(null)}
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <div className="preview-modal__body">
+              {activePreviewEmbed ? (
+                <iframe
+                  key={activePreviewEmbed}
+                  src={activePreviewEmbed}
+                  title={`${preview.item.title} — ${activePreviewLink.label}`}
+                  className="preview-modal__frame"
+                  allow="autoplay; fullscreen"
+                />
+              ) : (
+                <div className="preview-modal__fallback">
+                  <p>Tautan ini merupakan folder/halaman eksternal yang tidak mendukung pratinjau langsung.</p>
+                  <a
+                    href={activePreviewLink.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary"
+                  >
+                    BUKA DI TAB BARU ↗
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <footer className="footer">
         <span>BANZAI VADEMECUM · PWO CLASS OF 2026</span>

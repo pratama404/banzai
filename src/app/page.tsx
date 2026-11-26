@@ -1,7 +1,17 @@
 import Link from "next/link";
 import Iconify from "@/components/Iconify";
+import LogoutButton from "@/components/LogoutButton";
+import { getCurrentAuthUser } from "@/lib/admin-auth";
+import { loadCatalog } from "@/lib/catalog-server";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const [{ categories }, session] = await Promise.all([
+    loadCatalog(),
+    getCurrentAuthUser(),
+  ]);
+
   return (
     <div className="landing-page">
       {/* ══════ TOP BAR ══════ */}
@@ -20,6 +30,18 @@ export default function HomePage() {
           <Link href="/materi" className="topbar-link">
             MATERI
           </Link>
+          {session.authenticated && session.role === "admin" ? (
+            <Link href="/admin" className="topbar-link">
+              ADMIN
+            </Link>
+          ) : null}
+          {session.authenticated ? (
+            <LogoutButton />
+          ) : (
+            <Link href="/login" className="topbar-link">
+              LOGIN
+            </Link>
+          )}
         </nav>
       </header>
 
@@ -101,7 +123,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══════ MATERI PREVIEW ══════ */}
+      {/* ══════ MATERI PREVIEW (DYNAMIC FROM CATALOG) ══════ */}
       <section className="materi-preview" id="materi" aria-labelledby="materi-heading">
         <div className="materi-preview__inner">
           <p className="section-eyebrow">E-REFERENCES</p>
@@ -114,112 +136,38 @@ export default function HomePage() {
           </p>
 
           <div className="materi-grid">
-            <Link href="/materi?cat=gw" className="materi-card">
-              <span className="materi-card__icon" aria-hidden="true">
-                <Iconify icon="game-icons:crossed-swords" />
-              </span>
-              <h3 className="materi-card__title">1. GENERAL WARFARE</h3>
-              <p className="materi-card__code">GW</p>
-              <p className="materi-card__desc">
-                Core naval warfare doctrine, combat command &amp; control (C2), and joint
-                operational tactics.
-              </p>
-              <span className="materi-card__arrow" aria-hidden="true">
-                →
-              </span>
-            </Link>
-
-            <Link href="/materi?cat=aaw" className="materi-card">
-              <span className="materi-card__icon" aria-hidden="true">
-                <Iconify icon="game-icons:jet-fighter" />
-              </span>
-              <h3 className="materi-card__title">2. ANTI AIR WARFARE</h3>
-              <p className="materi-card__code">AAW</p>
-              <p className="materi-card__desc">
-                Fleet air defense, airborne radar tracking, and rapid low-altitude target
-                engagement.
-              </p>
-              <span className="materi-card__arrow" aria-hidden="true">
-                →
-              </span>
-            </Link>
-
-            <Link href="/materi?cat=asuw" className="materi-card">
-              <span className="materi-card__icon" aria-hidden="true">
-                <Iconify icon="game-icons:battleship" />
-              </span>
-              <h3 className="materi-card__title">3. ANTI SURFACE WARFARE</h3>
-              <p className="materi-card__code">ASuW</p>
-              <p className="materi-card__desc">
-                Surface warfare tactics, anti-ship missile engagement procedures, and combatant
-                operations.
-              </p>
-              <span className="materi-card__arrow" aria-hidden="true">
-                →
-              </span>
-            </Link>
-
-            <Link href="/materi?cat=asw" className="materi-card">
-              <span className="materi-card__icon" aria-hidden="true">
-                <Iconify icon="game-icons:submarine" />
-              </span>
-              <h3 className="materi-card__title">4. ANTI SUBMARINE WARFARE</h3>
-              <p className="materi-card__code">ASW</p>
-              <p className="materi-card__desc">
-                Underwater sonar detection, acoustic analysis, and submarine attack procedures.
-              </p>
-              <span className="materi-card__arrow" aria-hidden="true">
-                →
-              </span>
-            </Link>
-
-            <Link href="/materi?cat=ew" className="materi-card">
-              <span className="materi-card__icon" aria-hidden="true">
-                <Iconify icon="game-icons:radar-dish" />
-              </span>
-              <h3 className="materi-card__title">5. ELECTRONIC WARFARE</h3>
-              <p className="materi-card__code">EW</p>
-              <p className="materi-card__desc">
-                Electronic warfare operations, spectrum management, jamming, ESM, and ECCM
-                countermeasures.
-              </p>
-              <span className="materi-card__arrow" aria-hidden="true">
-                →
-              </span>
-            </Link>
-
-            <Link href="/materi?cat=mw" className="materi-card">
-              <span className="materi-card__icon" aria-hidden="true">
-                <Iconify icon="mdi:mine" />
-              </span>
-              <h3 className="materi-card__title">6. MINE WARFARE</h3>
-              <p className="materi-card__code">MW</p>
-              <p className="materi-card__desc">
-                Naval mine operations, safe navigation route clearance, and Mine Countermeasures
-                (MCM).
-              </p>
-              <span className="materi-card__arrow" aria-hidden="true">
-                →
-              </span>
-            </Link>
-
-            <Link href="/materi?cat=ref" className="materi-card materi-card--wide">
-              <span className="materi-card__icon" aria-hidden="true">
-                <Iconify icon="game-icons:bookshelf" />
-              </span>
-              <h3 className="materi-card__title">7. GENERAL REFERENCES</h3>
-              <p className="materi-card__code">REF</p>
-              <p className="materi-card__desc">
-                International doctrine &amp; standard manuals for tactical cross-reference.
-              </p>
-              <div className="materi-card-chips">
-                <span className="materi-chip">🇬🇧 7.1 IPWO INGGRIS</span>
-                <span className="materi-chip">🇳🇱 7.2 CCO BELANDA</span>
-              </div>
-              <span className="materi-card__arrow" aria-hidden="true">
-                →
-              </span>
-            </Link>
+            {categories.map((cat, idx) => {
+              const isWide = cat.id === "ref" || (idx === categories.length - 1 && categories.length % 2 === 1);
+              return (
+                <Link
+                  key={cat.id}
+                  href={`/materi?cat=${encodeURIComponent(cat.id)}`}
+                  className={`materi-card${isWide ? " materi-card--wide" : ""}`}
+                >
+                  <span className="materi-card__icon" aria-hidden="true">
+                    <Iconify icon={cat.icon} />
+                  </span>
+                  <h3 className="materi-card__title">
+                    {cat.code ? `${cat.code}. ` : `${idx + 1}. `}
+                    {cat.name}
+                  </h3>
+                  <p className="materi-card__code">{cat.short}</p>
+                  <p className="materi-card__desc">{cat.desc}</p>
+                  {cat.id === "ref" && cat.subcategories && cat.subcategories.length > 0 ? (
+                    <div className="materi-card-chips">
+                      {cat.subcategories.map((sub) => (
+                        <span key={sub.id} className="materi-chip">
+                          {sub.name}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                  <span className="materi-card__arrow" aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+              );
+            })}
           </div>
 
           <div className="materi-preview__cta">

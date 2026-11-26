@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Iconify from "@/components/Iconify";
@@ -10,6 +10,17 @@ interface AdminDashboardProps {
   initialCategories: Category[];
   initialMaterials: MaterialItem[];
   supabaseReady: boolean;
+}
+
+interface ManagedUser {
+  id: string;
+  username: string;
+  email: string;
+  full_name: string;
+  role: "admin" | "user";
+  created_at?: string;
+  last_sign_in_at?: string | null;
+  draftPassword?: string;
 }
 
 type AdminTab = "materials" | "categories" | "users";
@@ -30,6 +41,7 @@ export default function AdminDashboard({
   // ── Filter state for Materials tab ──
   const [filterCategory, setFilterCategory] = useState<string>("ALL");
   const [filterText, setFilterText] = useState("");
+  const [onlyMissingLinks, setOnlyMissingLinks] = useState(false);
 
   // ── Add Material form state ──
   const [matCatId, setMatCatId] = useState<string>(initialCategories[0]?.id || "");
@@ -51,20 +63,60 @@ export default function AdminDashboard({
   const [catIcon, setCatIcon] = useState("game-icons:bookshelf");
   const [catDesc, setCatDesc] = useState("");
 
+  // ── Edit Category inline state ──
+  const [editingCatId, setEditingCatId] = useState<string | null>(null);
+  const [editCatName, setEditCatName] = useState("");
+  const [editCatShort, setEditCatShort] = useState("");
+  const [editCatIcon, setEditCatIcon] = useState("");
+  const [editCatDesc, setEditCatDesc] = useState("");
+
   // ── Add Subcategory form state ──
   const [subParentId, setSubParentId] = useState<string>(initialCategories[0]?.id || "");
   const [subLabel, setSubLabel] = useState("");
 
-  // ── Add User form state ──
+  // ── Edit Subcategory inline state ──
+  const [editingSubId, setEditingSubId] = useState<string | null>(null);
+  const [editSubLabel, setEditSubLabel] = useState("");
+
+  // ── Add & Manage User state ──
   const [newIdentifier, setNewIdentifier] = useState("");
   const [newFullName, setNewFullName] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newRole, setNewRole] = useState<"user" | "admin">("user");
   const [creatingUser, setCreatingUser] = useState(false);
+  const [users, setUsers] = useState<ManagedUser[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [usersLoaded, setUsersLoaded] = useState(false);
+
+  // ── Summary statistics ──
+  const stats = useMemo(() => {
+    const total = materials.length;
+    let missing = 0;
+    let partial = 0;
+    for (const m of materials) {
+      const hasMod = Boolean(m.links?.module?.trim());
+      const hasLes = Boolean(m.links?.lessons?.trim());
+      if (!hasMod && !hasLes) missing++;
+      else if (!hasMod || !hasLes) partial++;
+    }
+    return {
+      total,
+      linked: total - missing,
+      missing,
+      partial,
+      categoriesCount: categories.length,
+    };
+  }, [materials, categories]);
 
   const filteredMaterials = useMemo(() => {
     const q = filterText.trim().toLowerCase();
     return materials.filter((item) => {
+      if (onlyMissingLinks) {
+        const hasMod = Boolean(item.links?.module?.trim());
+        const hasLes = Boolean(item.links?.lessons?.trim());
+        if (hasMod || hasLes) return false;
+      }
       if (filterCategory !== "ALL") {
         const cat = categories.find((c) => c.id === filterCategory);
         if (cat) {
@@ -78,7 +130,35 @@ export default function AdminDashboard({
       if (!q) return true;
       return [item.subject, item.title, item.module].join(" ").toLowerCase().includes(q);
     });
-  }, [materials, categories, filterCategory, filterText]);
+  }, [materials, categories, filterCategory, filterText, onlyMissingLinks]);
+
+  const fetchUsers = useCallback(async () => {
+    if (!supabaseReady) return;
+    setLoadingUsers(true);
+    try {
+      const res = await fetch("/api/admin/users");
+      const data = await res.json();
+      if (res.ok) {
+        setUsers(
+          (data.users || []).map((u: ManagedUser) => ({ ...u, draftPassword: "" })),
+        );
+        setCurrentUserId(data.currentUserId || null);
+        setUsersLoaded(true);
+      } else {
+        setStatusMsg({ type: "err", text: data.error || "Gagal memuat daftar user." });
+      }
+    } catch {
+      setStatusMsg({ type: "err", text: "Gagal menghubungi server untuk daftar user." });
+    } finally {
+      setLoadingUsers(false);
+    }
+  }, [supabaseReady]);
+
+  useEffect(() => {
+    if (activeTab === "users" && supabaseReady && !usersLoaded) {
+      fetchUsers();
+    }
+  }, [activeTab, supabaseReady, usersLoaded, fetchUsers]);
 
   // ── MATERIAL CRUD ─────────────────────────────────────────
   async function handleAddMaterial(e: React.FormEvent) {
@@ -211,6 +291,56 @@ export default function AdminDashboard({
     }
   }
 
+  function startEditCategory(cat: Category) {
+    setEditingCatId(cat.id);
+    setEditCatName(cat.name);
+    setEditCatShort(cat.short);
+    setEditCatIcon(cat.icon);
+    setEditCatDesc(cat.desc);
+  }
+
+  async function handleSaveCategory(catId: string) {
+    setStatusMsg(null);
+    try {
+      const res = await fetch("/api/admin/categories", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: catId,
+          name: editCatName,
+          short: editCatShort,
+          icon: editCatIcon,
+          description: editCatDesc,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setStatusMsg({ type: "err", text: data.error || "Gagal memperbarui kategori." });
+        return;
+      }
+      const normalizedName = editCatName.trim().toUpperCase();
+      const normalizedShort = editCatShort.trim().toUpperCase();
+      setCategories((prev) =>
+        prev.map((c) =>
+          c.id === catId
+            ? {
+                ...c,
+                name: normalizedName,
+                short: normalizedShort,
+                icon: editCatIcon.trim() || c.icon,
+                desc: editCatDesc.trim(),
+              }
+            : c,
+        ),
+      );
+      setEditingCatId(null);
+      setStatusMsg({ type: "ok", text: `Kategori "${normalizedName}" berhasil diperbarui.` });
+      router.refresh();
+    } catch {
+      setStatusMsg({ type: "err", text: "Gagal menghubungi server." });
+    }
+  }
+
   async function handleDeleteCategory(cat: Category) {
     if (
       !window.confirm(
@@ -279,6 +409,49 @@ export default function AdminDashboard({
     }
   }
 
+  async function handleSaveSubcategory(parentId: string, subId: string, oldName: string) {
+    const trimmed = editSubLabel.trim();
+    if (!trimmed) return;
+    setStatusMsg(null);
+    try {
+      const res = await fetch("/api/admin/subcategories", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: subId,
+          label: trimmed,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setStatusMsg({ type: "err", text: data.error || "Gagal memperbarui sub-kategori." });
+        return;
+      }
+      setCategories((prev) =>
+        prev.map((c) =>
+          c.id === parentId
+            ? {
+                ...c,
+                subcategories: (c.subcategories || []).map((s) =>
+                  s.id === subId ? { ...s, name: trimmed, label: trimmed } : s,
+                ),
+              }
+            : c,
+        ),
+      );
+      if (oldName !== trimmed) {
+        setMaterials((prev) =>
+          prev.map((m) => (m.subject === oldName ? { ...m, subject: trimmed } : m)),
+        );
+      }
+      setEditingSubId(null);
+      setStatusMsg({ type: "ok", text: `Sub-kategori "${trimmed}" berhasil diperbarui.` });
+      router.refresh();
+    } catch {
+      setStatusMsg({ type: "err", text: "Gagal menghubungi server." });
+    }
+  }
+
   async function handleDeleteSubcategory(parentId: string, subId: string, label: string) {
     if (!window.confirm(`Hapus sub-kategori "${label}"?`)) return;
     setStatusMsg(null);
@@ -305,7 +478,7 @@ export default function AdminDashboard({
     }
   }
 
-  // ── USER CREATE ───────────────────────────────────────────
+  // ── USER MANAGEMENT CRUD ──────────────────────────────────
   async function handleCreateUser(e: React.FormEvent) {
     e.preventDefault();
     setStatusMsg(null);
@@ -327,6 +500,7 @@ export default function AdminDashboard({
         setStatusMsg({ type: "err", text: data.error || "Gagal membuat akun." });
         return;
       }
+      setUsers((prev) => [...prev, { ...data.user, draftPassword: "" }]);
       setStatusMsg({
         type: "ok",
         text: `Akun berhasil dibuat untuk "${data.user.username}" (${data.user.role.toUpperCase()}).`,
@@ -336,6 +510,55 @@ export default function AdminDashboard({
       setNewPassword("");
     } catch {
       setCreatingUser(false);
+      setStatusMsg({ type: "err", text: "Gagal menghubungi server." });
+    }
+  }
+
+  async function handleUpdateUser(u: ManagedUser) {
+    setStatusMsg(null);
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: u.id,
+          role: u.role,
+          fullName: u.full_name,
+          password: u.draftPassword || "",
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setStatusMsg({ type: "err", text: data.error || "Gagal memperbarui akun." });
+        return;
+      }
+      setUsers((prev) =>
+        prev.map((row) => (row.id === u.id ? { ...row, draftPassword: "" } : row)),
+      );
+      setStatusMsg({
+        type: "ok",
+        text: `Akun "${u.username}" diperbarui${u.draftPassword ? " (termasuk password baru)" : ""}.`,
+      });
+    } catch {
+      setStatusMsg({ type: "err", text: "Gagal menghubungi server." });
+    }
+  }
+
+  async function handleDeleteUser(u: ManagedUser) {
+    if (!window.confirm(`Hapus akun "${u.username}" (${u.email}) secara permanen?`)) return;
+    setStatusMsg(null);
+    try {
+      const res = await fetch(`/api/admin/users?id=${encodeURIComponent(u.id)}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setStatusMsg({ type: "err", text: data.error || "Gagal menghapus akun." });
+        return;
+      }
+      setUsers((prev) => prev.filter((row) => row.id !== u.id));
+      setStatusMsg({ type: "ok", text: `Akun "${u.username}" berhasil dihapus.` });
+    } catch {
       setStatusMsg({ type: "err", text: "Gagal menghubungi server." });
     }
   }
@@ -383,6 +606,40 @@ export default function AdminDashboard({
           </span>
         </div>
 
+        {/* Summary Stats */}
+        <section className="admin-stats-bar" aria-label="Ringkasan katalog">
+          <div className="admin-stat-card">
+            <span className="admin-stat-card__label">TOTAL MATERI</span>
+            <strong className="admin-stat-card__value">{stats.total}</strong>
+          </div>
+          <div className="admin-stat-card">
+            <span className="admin-stat-card__label">TERTAUT LINK</span>
+            <strong className="admin-stat-card__value admin-stat-card__value--ok">
+              {stats.linked}
+            </strong>
+          </div>
+          <button
+            type="button"
+            className={`admin-stat-card admin-stat-card--action${
+              onlyMissingLinks && activeTab === "materials" ? " is-active" : ""
+            }`}
+            onClick={() => {
+              setActiveTab("materials");
+              setOnlyMissingLinks((prev) => !prev);
+            }}
+            title="Klik untuk memfilter materi yang belum memiliki link"
+          >
+            <span className="admin-stat-card__label">LINK KOSONG (KLIK FILTER)</span>
+            <strong className="admin-stat-card__value admin-stat-card__value--warn">
+              {stats.missing}
+            </strong>
+          </button>
+          <div className="admin-stat-card">
+            <span className="admin-stat-card__label">KATEGORI UTAMA</span>
+            <strong className="admin-stat-card__value">{stats.categoriesCount}</strong>
+          </div>
+        </section>
+
         {!supabaseReady ? (
           <div className="auth-alert">
             Mode Preview Aktif: Jalankan file <code>supabase/schema_and_seed.sql</code> di
@@ -429,7 +686,7 @@ export default function AdminDashboard({
             className={`admin-tab${activeTab === "users" ? " is-active" : ""}`}
             onClick={() => setActiveTab("users")}
           >
-            AKUN USER &amp; ADMIN
+            AKUN USER &amp; ADMIN{usersLoaded ? ` (${users.length})` : ""}
           </button>
         </div>
 
@@ -538,11 +795,19 @@ export default function AdminDashboard({
                 </select>
                 <input
                   className="admin-input-inline"
+                  style={{ flex: "1 1 200px" }}
                   type="search"
                   placeholder="Cari judul atau sub-materi..."
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
                 />
+                <button
+                  type="button"
+                  className={`admin-toggle-chip${onlyMissingLinks ? " is-active" : ""}`}
+                  onClick={() => setOnlyMissingLinks((prev) => !prev)}
+                >
+                  LINK KOSONG ({stats.missing})
+                </button>
               </div>
 
               <div className="admin-table-wrap">
@@ -730,47 +995,154 @@ export default function AdminDashboard({
               <p>Seluruh kategori utama beserta sub-materi yang tampil di sidebar `/materi`.</p>
 
               <div className="admin-cat-list">
-                {categories.map((cat) => (
-                  <div key={cat.id} className="admin-cat-card">
-                    <div className="admin-cat-card__head">
-                      <div className="admin-cat-card__title">
-                        <span className="category-icon" aria-hidden="true">
-                          <Iconify icon={cat.icon} />
-                        </span>
-                        <strong>{cat.name}</strong>
-                        <span className="admin-badge">{cat.short}</span>
-                      </div>
-                      <button
-                        type="button"
-                        className="admin-del-btn"
-                        onClick={() => handleDeleteCategory(cat)}
-                      >
-                        HAPUS KATEGORI
-                      </button>
-                    </div>
-
-                    {cat.subcategories && cat.subcategories.length > 0 ? (
-                      <ul className="admin-sub-list">
-                        {cat.subcategories.map((sub) => (
-                          <li key={sub.id} className="admin-sub-item">
-                            <span>↳ {sub.label}</span>
+                {categories.map((cat) => {
+                  const isEditingCat = editingCatId === cat.id;
+                  return (
+                    <div key={cat.id} className="admin-cat-card">
+                      {isEditingCat ? (
+                        <div className="admin-edit-form">
+                          <div className="admin-edit-grid">
+                            <input
+                              className="admin-input-inline"
+                              placeholder="Nama kategori"
+                              value={editCatName}
+                              onChange={(e) => setEditCatName(e.target.value)}
+                            />
+                            <input
+                              className="admin-input-inline"
+                              placeholder="Singkatan"
+                              value={editCatShort}
+                              onChange={(e) => setEditCatShort(e.target.value)}
+                            />
+                            <input
+                              className="admin-input-inline"
+                              placeholder="Icon Iconify"
+                              value={editCatIcon}
+                              onChange={(e) => setEditCatIcon(e.target.value)}
+                            />
+                            <input
+                              className="admin-input-inline"
+                              placeholder="Deskripsi singkat"
+                              value={editCatDesc}
+                              onChange={(e) => setEditCatDesc(e.target.value)}
+                            />
+                          </div>
+                          <div className="admin-row-actions">
                             <button
                               type="button"
-                              className="admin-del-btn admin-del-btn--sm"
-                              onClick={() =>
-                                handleDeleteSubcategory(cat.id, sub.id, sub.label)
-                              }
+                              className="admin-save-btn"
+                              onClick={() => handleSaveCategory(cat.id)}
+                            >
+                              SIMPAN
+                            </button>
+                            <button
+                              type="button"
+                              className="admin-del-btn"
+                              onClick={() => setEditingCatId(null)}
+                            >
+                              BATAL
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="admin-cat-card__head">
+                          <div className="admin-cat-card__title">
+                            <span className="category-icon" aria-hidden="true">
+                              <Iconify icon={cat.icon} />
+                            </span>
+                            <strong>{cat.name}</strong>
+                            <span className="admin-badge">{cat.short}</span>
+                          </div>
+                          <div className="admin-row-actions">
+                            <button
+                              type="button"
+                              className="admin-edit-btn"
+                              onClick={() => startEditCategory(cat)}
+                            >
+                              EDIT
+                            </button>
+                            <button
+                              type="button"
+                              className="admin-del-btn"
+                              onClick={() => handleDeleteCategory(cat)}
                             >
                               HAPUS
                             </button>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="admin-sub-empty">Tanpa sub-kategori (materi langsung di kategori ini)</p>
-                    )}
-                  </div>
-                ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {cat.subcategories && cat.subcategories.length > 0 ? (
+                        <ul className="admin-sub-list">
+                          {cat.subcategories.map((sub) => {
+                            const isEditingSub = editingSubId === sub.id;
+                            return (
+                              <li key={sub.id} className="admin-sub-item">
+                                {isEditingSub ? (
+                                  <>
+                                    <input
+                                      className="admin-input-inline"
+                                      style={{ maxWidth: 280 }}
+                                      value={editSubLabel}
+                                      onChange={(e) => setEditSubLabel(e.target.value)}
+                                    />
+                                    <div className="admin-row-actions">
+                                      <button
+                                        type="button"
+                                        className="admin-save-btn admin-btn--sm"
+                                        onClick={() =>
+                                          handleSaveSubcategory(cat.id, sub.id, sub.name)
+                                        }
+                                      >
+                                        SIMPAN
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="admin-del-btn admin-del-btn--sm"
+                                        onClick={() => setEditingSubId(null)}
+                                      >
+                                        BATAL
+                                      </button>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <span>↳ {sub.label}</span>
+                                    <div className="admin-row-actions">
+                                      <button
+                                        type="button"
+                                        className="admin-edit-btn admin-del-btn--sm"
+                                        onClick={() => {
+                                          setEditingSubId(sub.id);
+                                          setEditSubLabel(sub.label);
+                                        }}
+                                      >
+                                        EDIT
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="admin-del-btn admin-del-btn--sm"
+                                        onClick={() =>
+                                          handleDeleteSubcategory(cat.id, sub.id, sub.label)
+                                        }
+                                      >
+                                        HAPUS
+                                      </button>
+                                    </div>
+                                  </>
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      ) : (
+                        <p className="admin-sub-empty">
+                          Tanpa sub-kategori (materi langsung di kategori ini)
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </section>
           </div>
@@ -778,7 +1150,7 @@ export default function AdminDashboard({
 
         {/* ════════ TAB 3: AKUN USER & ADMIN ════════ */}
         {activeTab === "users" ? (
-          <div style={{ maxWidth: 480 }}>
+          <div className="admin-grid">
             <section className="admin-panel">
               <h2>Buat Akun Tetap</h2>
               <p>
@@ -834,6 +1206,141 @@ export default function AdminDashboard({
                   {creatingUser ? "MEMBUAT AKUN..." : "BUAT AKUN USER +"}
                 </button>
               </form>
+            </section>
+
+            <section className="admin-panel">
+              <div className="admin-panel-head">
+                <div>
+                  <h2>Daftar Akun Terdaftar ({users.length})</h2>
+                  <p>Ubah role, nama/pangkat, reset password, atau hapus akun.</p>
+                </div>
+                <button
+                  type="button"
+                  className="admin-edit-btn"
+                  onClick={fetchUsers}
+                  disabled={loadingUsers || !supabaseReady}
+                >
+                  {loadingUsers ? "MEMUAT..." : "MUAT ULANG"}
+                </button>
+              </div>
+
+              {!supabaseReady ? (
+                <p className="admin-sub-empty">
+                  Hubungkan Supabase untuk mengelola daftar akun secara langsung.
+                </p>
+              ) : loadingUsers && !usersLoaded ? (
+                <p className="admin-sub-empty">Memuat daftar akun dari Supabase Auth...</p>
+              ) : users.length === 0 ? (
+                <p className="admin-sub-empty">Belum ada akun terdaftar di Supabase Auth.</p>
+              ) : (
+                <div className="admin-table-wrap">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>USERNAME / EMAIL</th>
+                        <th>NAMA / PANGKAT</th>
+                        <th>ROLE</th>
+                        <th>RESET PASSWORD</th>
+                        <th>AKSI</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {users.map((u) => {
+                        const isSelf = Boolean(currentUserId && currentUserId === u.id);
+                        return (
+                          <tr key={u.id}>
+                            <td>
+                              <div className="admin-cell-subject">
+                                {u.username}
+                                {isSelf ? (
+                                  <span className="admin-badge" style={{ marginLeft: 6 }}>
+                                    ANDA
+                                  </span>
+                                ) : null}
+                              </div>
+                              <div className="admin-user-email">{u.email}</div>
+                            </td>
+                            <td>
+                              <input
+                                className="admin-input-inline"
+                                placeholder="Nama / Pangkat"
+                                value={u.full_name}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setUsers((prev) =>
+                                    prev.map((row) =>
+                                      row.id === u.id ? { ...row, full_name: val } : row,
+                                    ),
+                                  );
+                                }}
+                              />
+                            </td>
+                            <td>
+                              <select
+                                className="admin-input-inline"
+                                style={{ minWidth: 96 }}
+                                value={u.role}
+                                disabled={isSelf}
+                                onChange={(e) => {
+                                  const val = e.target.value as "admin" | "user";
+                                  setUsers((prev) =>
+                                    prev.map((row) =>
+                                      row.id === u.id ? { ...row, role: val } : row,
+                                    ),
+                                  );
+                                }}
+                              >
+                                <option value="user">USER</option>
+                                <option value="admin">ADMIN</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input
+                                className="admin-input-inline"
+                                type="text"
+                                placeholder="Isi jika reset..."
+                                value={u.draftPassword || ""}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setUsers((prev) =>
+                                    prev.map((row) =>
+                                      row.id === u.id ? { ...row, draftPassword: val } : row,
+                                    ),
+                                  );
+                                }}
+                              />
+                            </td>
+                            <td>
+                              <div className="admin-row-actions">
+                                <button
+                                  type="button"
+                                  className="admin-save-btn"
+                                  onClick={() => handleUpdateUser(u)}
+                                >
+                                  SIMPAN
+                                </button>
+                                <button
+                                  type="button"
+                                  className="admin-del-btn"
+                                  disabled={isSelf}
+                                  title={
+                                    isSelf
+                                      ? "Tidak dapat menghapus akun sendiri"
+                                      : "Hapus akun ini"
+                                  }
+                                  onClick={() => handleDeleteUser(u)}
+                                >
+                                  HAPUS
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </section>
           </div>
         ) : null}
