@@ -4,9 +4,10 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isProtectedPath = pathname.startsWith("/materi") || pathname.startsWith("/admin");
-  const isAdminPath = pathname.startsWith("/admin");
-  const isLoginPath = pathname.startsWith("/login");
+  const isAdminLoginPath = pathname === "/admin/login" || pathname.startsWith("/admin/login/");
+  const isUserLoginPath = pathname === "/login" || pathname.startsWith("/login/");
+  const isAdminPath = pathname.startsWith("/admin") && !isAdminLoginPath;
+  const isMateriPath = pathname.startsWith("/materi");
 
   let response = NextResponse.next({
     request: {
@@ -68,13 +69,15 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (isProtectedPath && !isAuthenticated) {
-    const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/login";
-    loginUrl.searchParams.set("next", pathname + request.nextUrl.search);
-    return NextResponse.redirect(loginUrl);
+  // Unauthenticated access to /admin -> dedicated Admin Login
+  if (isAdminPath && !isAuthenticated) {
+    const adminLoginUrl = request.nextUrl.clone();
+    adminLoginUrl.pathname = "/admin/login";
+    adminLoginUrl.search = "";
+    return NextResponse.redirect(adminLoginUrl);
   }
 
+  // Authenticated non-admin trying to enter /admin -> send to /materi
   if (isAdminPath && isAuthenticated && userRole !== "admin") {
     const materiUrl = request.nextUrl.clone();
     materiUrl.pathname = "/materi";
@@ -82,7 +85,24 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(materiUrl);
   }
 
-  if (isLoginPath && isAuthenticated) {
+  // Unauthenticated access to /materi -> Student Login
+  if (isMateriPath && !isAuthenticated) {
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = "/login";
+    loginUrl.searchParams.set("next", pathname + request.nextUrl.search);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Already logged-in admin visiting /admin/login -> /admin
+  if (isAdminLoginPath && isAuthenticated && userRole === "admin") {
+    const adminUrl = request.nextUrl.clone();
+    adminUrl.pathname = "/admin";
+    adminUrl.search = "";
+    return NextResponse.redirect(adminUrl);
+  }
+
+  // Already logged-in user visiting /login -> /materi
+  if (isUserLoginPath && isAuthenticated) {
     const destUrl = request.nextUrl.clone();
     destUrl.pathname = "/materi";
     destUrl.search = "";

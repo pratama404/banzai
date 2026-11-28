@@ -7,6 +7,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const identifier = String(body.identifier || "").trim();
     const password = String(body.password || "");
+    const portal: "admin" | "user" = body.portal === "admin" ? "admin" : "user";
 
     if (!identifier || !password) {
       return NextResponse.json(
@@ -44,6 +45,17 @@ export async function POST(request: Request) {
         if (profile?.role === "admin") role = "admin";
       }
 
+      if (portal === "admin" && role !== "admin") {
+        await supabase.auth.signOut();
+        return NextResponse.json(
+          {
+            error:
+              "Akun ini tidak memiliki hak akses Administrator. Silakan masuk melalui Login Perwira Siswa.",
+          },
+          { status: 403 },
+        );
+      }
+
       const res = NextResponse.json({ ok: true, role, mode: "supabase" });
       res.cookies.delete("pwo_session");
       return res;
@@ -69,6 +81,15 @@ export async function POST(request: Request) {
     }
 
     if (matchedRole) {
+      if (portal === "admin" && matchedRole !== "admin") {
+        return NextResponse.json(
+          {
+            error:
+              "Akun ini tidak memiliki hak akses Administrator. Silakan masuk melalui Login Perwira Siswa.",
+          },
+          { status: 403 },
+        );
+      }
       const res = NextResponse.json({ ok: true, role: matchedRole, mode: "fallback" });
       res.cookies.set("pwo_session", matchedRole, {
         httpOnly: true,

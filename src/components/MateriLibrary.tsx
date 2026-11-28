@@ -248,11 +248,6 @@ export default function MateriLibrary({
           <Link href="/materi" className="topbar-link is-active">
             MATERI
           </Link>
-          {userRole === "admin" ? (
-            <Link href="/admin" className="topbar-link">
-              ADMIN
-            </Link>
-          ) : null}
           <button type="button" className="topbar-button" onClick={handleLogout}>
             KELUAR
           </button>

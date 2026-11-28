@@ -5,7 +5,7 @@ import { loadCatalog } from "@/lib/catalog-server";
 
 export default async function AdminPage() {
   if (!(await assertAdmin())) {
-    redirect("/materi");
+    redirect("/admin/login");
   }
 
   const { categories, materials, supabaseReady } = await loadCatalog();

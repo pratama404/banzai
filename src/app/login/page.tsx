@@ -3,8 +3,9 @@
 import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import Iconify from "@/components/Iconify";
 
-function LoginForm() {
+function StudentLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next") || "/materi";
@@ -23,7 +24,7 @@ function LoginForm() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, password }),
+        body: JSON.stringify({ identifier, password, portal: "user" }),
       });
       const data = await res.json();
 
@@ -33,7 +34,9 @@ function LoginForm() {
         return;
       }
 
-      const target = nextPath.startsWith("/") ? nextPath : "/materi";
+      const target = nextPath.startsWith("/") && !nextPath.startsWith("/admin")
+        ? nextPath
+        : "/materi";
       router.push(target);
       router.refresh();
     } catch {
@@ -43,12 +46,17 @@ function LoginForm() {
   }
 
   return (
-    <div className="auth-card">
+    <div className="auth-card auth-card--student">
+      <div className="auth-portal-badge auth-portal-badge--student">
+        <Iconify icon="game-icons:bookshelf" />
+        <span>PORTAL PERWIRA SISWA · E-REFERENCES</span>
+      </div>
+
       <div className="auth-card__header">
-        <p className="eyebrow">RESTRICTED ACCESS · PWO CLASS OF 2026</p>
-        <h1 className="auth-card__title">Officer Sign In</h1>
+        <h1 className="auth-card__title">Student Sign In</h1>
         <p className="auth-card__subtitle">
-          Masukkan username atau email beserta password tetap untuk mengakses E-References PWO.
+          Masuk dengan akun Perwira Siswa PWO Class of 2026 untuk membaca dan mencari modul
+          referensi peperangan laut.
         </p>
       </div>
 
@@ -87,14 +95,19 @@ function LoginForm() {
           </div>
         ) : null}
 
-        <button className="auth-submit" type="submit" disabled={loading}>
+        <button className="auth-submit auth-submit--student" type="submit" disabled={loading}>
           {loading ? "MEMVERIFIKASI..." : "MASUK KE E-REFERENCES ↗"}
         </button>
       </form>
 
       <div className="auth-note">
-        Akses khusus Perwira Siswa &amp; Instruktur PWO TNI AL. Hubungi Administrator Kelas jika
-        Anda membutuhkan akses akun.
+        <p>
+          Akses khusus Perwira Siswa &amp; Instruktur PWO TNI AL. Hubungi Administrator Kelas jika
+          Anda belum memiliki akun.
+        </p>
+        <Link href="/admin/login" className="auth-switch-link">
+          Masuk sebagai Administrator →
+        </Link>
       </div>
     </div>
   );
@@ -121,11 +134,11 @@ export default function LoginPage() {
         </nav>
       </header>
 
-      <main className="auth-page">
+      <main className="auth-page auth-page--student">
         <div className="auth-page__bg" aria-hidden="true"></div>
         <div className="auth-page__overlay" aria-hidden="true"></div>
         <Suspense fallback={<div className="auth-card">Memuat form login...</div>}>
-          <LoginForm />
+          <StudentLoginForm />
         </Suspense>
       </main>
 

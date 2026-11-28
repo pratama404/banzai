@@ -88,6 +88,7 @@ export default function AdminDashboard({
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [usersLoaded, setUsersLoaded] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // ── Summary statistics ──
   const stats = useMemo(() => {
@@ -565,130 +566,193 @@ export default function AdminDashboard({
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
+    router.push("/admin/login");
     router.refresh();
   }
 
-  return (
-    <>
-      <header className="topbar">
-        <Link className="brand" href="/" aria-label="PWO Vademecum, beranda">
-          <img className="brand-logo" src="/assets/logo/logo-pwo.png" alt="Logo PWO 2026" />
-          <span className="brand-copy">
-            <strong>PRINCIPAL WARFARE OFFICER</strong>
-            <small>ADMINISTRATION · CLASS OF 2026</small>
-          </span>
-        </Link>
-        <nav className="topbar-nav">
-          <Link href="/" className="topbar-link">
-            BERANDA
-          </Link>
-          <Link href="/materi" className="topbar-link">
-            MATERI
-          </Link>
-          <Link href="/admin" className="topbar-link is-active">
-            ADMIN
-          </Link>
-          <button type="button" className="topbar-button" onClick={handleLogout}>
-            KELUAR
-          </button>
-        </nav>
-      </header>
+  const activeTabLabel =
+    activeTab === "materials"
+      ? "Kelola Materi"
+      : activeTab === "categories"
+        ? "Kategori & Sub-Kategori"
+        : "Akun User & Admin";
 
-      <main className="admin-shell">
-        <div className="admin-header">
+  return (
+    <div className="admin-layout">
+      {/* ══════ DEDICATED ADMIN SIDEBAR (SEPARATE FROM USER/LANDING NAVBAR) ══════ */}
+      <aside className={`admin-sidebar${mobileMenuOpen ? " is-open" : ""}`} aria-label="Navigasi Admin">
+        <div className="admin-sidebar__brand">
+          <img src="/assets/logo/logo-pwo.png" alt="Logo PWO 2026" />
           <div>
-            <p className="eyebrow">COMMAND CENTER · PWO CLASS OF 2026</p>
-            <h1>Admin &amp; Catalog Management</h1>
+            <strong>COMMAND CENTER</strong>
+            <span>ADMIN CONSOLE · PWO 2026</span>
           </div>
-          <span className="document-total">
-            SUPABASE: {supabaseReady ? "CONNECTED" : "PREVIEW MODE (BELUM TERHUBUNG)"}
-          </span>
         </div>
 
-        {/* Summary Stats */}
-        <section className="admin-stats-bar" aria-label="Ringkasan katalog">
-          <div className="admin-stat-card">
-            <span className="admin-stat-card__label">TOTAL MATERI</span>
-            <strong className="admin-stat-card__value">{stats.total}</strong>
-          </div>
-          <div className="admin-stat-card">
-            <span className="admin-stat-card__label">TERTAUT LINK</span>
-            <strong className="admin-stat-card__value admin-stat-card__value--ok">
-              {stats.linked}
-            </strong>
-          </div>
-          <button
-            type="button"
-            className={`admin-stat-card admin-stat-card--action${
-              onlyMissingLinks && activeTab === "materials" ? " is-active" : ""
-            }`}
-            onClick={() => {
-              setActiveTab("materials");
-              setOnlyMissingLinks((prev) => !prev);
-            }}
-            title="Klik untuk memfilter materi yang belum memiliki link"
-          >
-            <span className="admin-stat-card__label">LINK KOSONG (KLIK FILTER)</span>
-            <strong className="admin-stat-card__value admin-stat-card__value--warn">
-              {stats.missing}
-            </strong>
-          </button>
-          <div className="admin-stat-card">
-            <span className="admin-stat-card__label">KATEGORI UTAMA</span>
-            <strong className="admin-stat-card__value">{stats.categoriesCount}</strong>
-          </div>
-        </section>
-
-        {!supabaseReady ? (
-          <div className="auth-alert">
-            Mode Preview Aktif: Jalankan file <code>supabase/schema_and_seed.sql</code> di
-            Supabase SQL Editor dan pasang <code>NEXT_PUBLIC_SUPABASE_URL</code>,{" "}
-            <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>, serta{" "}
-            <code>SUPABASE_SERVICE_ROLE_KEY</code> untuk menyimpan seluruh perubahan CRUD secara
-            permanen ke database.
-          </div>
-        ) : null}
-
-        {statusMsg ? (
-          <div
-            className={`auth-alert${statusMsg.type === "ok" ? " auth-alert--ok" : ""}`}
-            role="status"
-          >
-            {statusMsg.text}
-          </div>
-        ) : null}
-
-        {/* Navigation Tabs */}
-        <div className="admin-tabs" role="tablist">
+        <p className="admin-sidebar__section">MANAJEMEN</p>
+        <nav className="admin-sidebar__nav" role="tablist" aria-orientation="vertical">
           <button
             type="button"
             role="tab"
             aria-selected={activeTab === "materials"}
-            className={`admin-tab${activeTab === "materials" ? " is-active" : ""}`}
-            onClick={() => setActiveTab("materials")}
+            className={`admin-nav-item${activeTab === "materials" ? " is-active" : ""}`}
+            onClick={() => {
+              setActiveTab("materials");
+              setMobileMenuOpen(false);
+            }}
           >
-            KELOLA MATERI ({materials.length})
+            <Iconify icon="game-icons:bookshelf" />
+            <span>KELOLA MATERI</span>
+            <em className="admin-nav-count">{materials.length}</em>
           </button>
+
           <button
             type="button"
             role="tab"
             aria-selected={activeTab === "categories"}
-            className={`admin-tab${activeTab === "categories" ? " is-active" : ""}`}
-            onClick={() => setActiveTab("categories")}
+            className={`admin-nav-item${activeTab === "categories" ? " is-active" : ""}`}
+            onClick={() => {
+              setActiveTab("categories");
+              setMobileMenuOpen(false);
+            }}
           >
-            KATEGORI &amp; SUB-KATEGORI ({categories.length})
+            <Iconify icon="game-icons:crossed-swords" />
+            <span>KATEGORI &amp; SUB</span>
+            <em className="admin-nav-count">{categories.length}</em>
           </button>
+
           <button
             type="button"
             role="tab"
             aria-selected={activeTab === "users"}
-            className={`admin-tab${activeTab === "users" ? " is-active" : ""}`}
-            onClick={() => setActiveTab("users")}
+            className={`admin-nav-item${activeTab === "users" ? " is-active" : ""}`}
+            onClick={() => {
+              setActiveTab("users");
+              setMobileMenuOpen(false);
+            }}
           >
-            AKUN USER &amp; ADMIN{usersLoaded ? ` (${users.length})` : ""}
+            <Iconify icon="game-icons:radar-dish" />
+            <span>AKUN USER &amp; ADMIN</span>
+            {usersLoaded ? <em className="admin-nav-count">{users.length}</em> : null}
+          </button>
+        </nav>
+
+        <p className="admin-sidebar__section">PRATINJAU SITUS</p>
+        <div className="admin-sidebar__links">
+          <Link href="/materi" target="_blank" className="admin-ext-link">
+            <span>Buka E-References</span>
+            <span aria-hidden="true">↗</span>
+          </Link>
+          <Link href="/" target="_blank" className="admin-ext-link">
+            <span>Buka Landing Page</span>
+            <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
+
+        <div className="admin-sidebar__footer">
+          <button type="button" className="admin-logout-btn" onClick={handleLogout}>
+            KELUAR COMMAND CENTER
           </button>
         </div>
+      </aside>
+
+      {mobileMenuOpen ? (
+        <div
+          className="admin-sidebar-backdrop"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      ) : null}
+
+      {/* ══════ DEDICATED ADMIN MAIN WORKSPACE ══════ */}
+      <div className="admin-content-col">
+        <header className="admin-topbar">
+          <div className="admin-topbar__left">
+            <button
+              type="button"
+              className="admin-mobile-toggle"
+              aria-label="Toggle menu admin"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+            >
+              ☰
+            </button>
+            <div className="admin-breadcrumb">
+              <span>ADMIN</span>
+              <span aria-hidden="true">/</span>
+              <strong>{activeTabLabel.toUpperCase()}</strong>
+            </div>
+          </div>
+
+          <div className="admin-topbar__right">
+            <span
+              className={`admin-status-pill${supabaseReady ? " is-online" : ""}`}
+            >
+              <i aria-hidden="true" />
+              {supabaseReady ? "SUPABASE CONNECTED" : "PREVIEW MODE"}
+            </span>
+          </div>
+        </header>
+
+        <main className="admin-shell">
+          <div className="admin-header">
+            <div>
+              <p className="eyebrow">COMMAND CENTER · PWO CLASS OF 2026</p>
+              <h1>{activeTabLabel}</h1>
+            </div>
+          </div>
+
+          {/* Summary Stats */}
+          <section className="admin-stats-bar" aria-label="Ringkasan katalog">
+            <div className="admin-stat-card">
+              <span className="admin-stat-card__label">TOTAL MATERI</span>
+              <strong className="admin-stat-card__value">{stats.total}</strong>
+            </div>
+            <div className="admin-stat-card">
+              <span className="admin-stat-card__label">TERTAUT LINK</span>
+              <strong className="admin-stat-card__value admin-stat-card__value--ok">
+                {stats.linked}
+              </strong>
+            </div>
+            <button
+              type="button"
+              className={`admin-stat-card admin-stat-card--action${
+                onlyMissingLinks && activeTab === "materials" ? " is-active" : ""
+              }`}
+              onClick={() => {
+                setActiveTab("materials");
+                setOnlyMissingLinks((prev) => !prev);
+              }}
+              title="Klik untuk memfilter materi yang belum memiliki link"
+            >
+              <span className="admin-stat-card__label">LINK KOSONG (KLIK FILTER)</span>
+              <strong className="admin-stat-card__value admin-stat-card__value--warn">
+                {stats.missing}
+              </strong>
+            </button>
+            <div className="admin-stat-card">
+              <span className="admin-stat-card__label">KATEGORI UTAMA</span>
+              <strong className="admin-stat-card__value">{stats.categoriesCount}</strong>
+            </div>
+          </section>
+
+          {!supabaseReady ? (
+            <div className="auth-alert">
+              Mode Preview Aktif: Jalankan file <code>supabase/schema_and_seed.sql</code> di
+              Supabase SQL Editor dan pasang <code>NEXT_PUBLIC_SUPABASE_URL</code>,{" "}
+              <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>, serta{" "}
+              <code>SUPABASE_SERVICE_ROLE_KEY</code> untuk menyimpan seluruh perubahan CRUD secara
+              permanen ke database.
+            </div>
+          ) : null}
+
+          {statusMsg ? (
+            <div
+              className={`auth-alert${statusMsg.type === "ok" ? " auth-alert--ok" : ""}`}
+              role="status"
+            >
+              {statusMsg.text}
+            </div>
+          ) : null}
 
         {/* ════════ TAB 1: CRUD MATERI ════════ */}
         {activeTab === "materials" ? (
@@ -1344,12 +1408,13 @@ export default function AdminDashboard({
             </section>
           </div>
         ) : null}
-      </main>
+        </main>
 
-      <footer className="footer">
-        <span>E-REFERENCES · PWO CLASS OF 2026</span>
-        <span>気迫 · 精撃 · 必勝</span>
-      </footer>
-    </>
+        <footer className="footer admin-footer">
+          <span>ADMIN COMMAND CENTER · PWO CLASS OF 2026</span>
+          <span>気迫 · 精撃 · 必勝</span>
+        </footer>
+      </div>
+    </div>
   );
 }

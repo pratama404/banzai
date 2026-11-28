@@ -84,6 +84,12 @@ export async function PUT(request: Request) {
     }
 
     const adminDb = createServiceRoleSupabase();
+    const { data: prev } = await adminDb
+      .from("categories")
+      .select("name")
+      .eq("id", id)
+      .maybeSingle();
+
     const { error } = await adminDb
       .from("categories")
       .update({
@@ -97,6 +103,16 @@ export async function PUT(request: Request) {
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // Keep linked materials in sync when category name changes
+    if (prev?.name && prev.name !== name) {
+      await adminDb.from("materials").update({ module: name }).eq("category_id", id);
+      await adminDb
+        .from("materials")
+        .update({ subject: name })
+        .eq("category_id", id)
+        .is("subcategory_id", null);
     }
 
     return NextResponse.json({ ok: true });

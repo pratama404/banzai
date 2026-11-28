@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -56,7 +56,6 @@ function splitNodeIntoWords(node: Node): Node {
 }
 
 function prepareHeadingWords(heading: HTMLElement): NodeListOf<HTMLElement> {
-  // Restore original raw HTML if previously split
   if (heading.dataset.originalHtml) {
     heading.innerHTML = heading.dataset.originalHtml;
   } else {
@@ -104,9 +103,35 @@ export function animateHeadingWords(heading: HTMLElement, useScrollTrigger = tru
 
 export default function SmoothScroll() {
   const pathname = usePathname();
+  const progressBarRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const updateProgress = (explicitProgress?: number) => {
+      const bar = progressBarRef.current;
+      if (!bar) return;
+
+      let pct = 0;
+      if (typeof explicitProgress === "number" && Number.isFinite(explicitProgress)) {
+        pct = Math.max(0, Math.min(1, explicitProgress));
+      } else {
+        const doc = document.documentElement;
+        const maxScroll = doc.scrollHeight - window.innerHeight;
+        pct = maxScroll > 0 ? Math.max(0, Math.min(1, window.scrollY / maxScroll)) : 0;
+      }
+      bar.style.transform = `scaleX(${pct})`;
+    };
+
+    const onNativeScroll = () => updateProgress();
+    window.addEventListener("scroll", onNativeScroll, { passive: true });
+    window.addEventListener("resize", onNativeScroll, { passive: true });
+    updateProgress();
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return () => {
+        window.removeEventListener("scroll", onNativeScroll);
+        window.removeEventListener("resize", onNativeScroll);
+      };
+    }
 
     gsap.registerPlugin(ScrollTrigger);
     window.animateHeadingWords = animateHeadingWords;
@@ -119,7 +144,10 @@ export default function SmoothScroll() {
       touchMultiplier: 1.5,
     });
 
-    lenis.on("scroll", ScrollTrigger.update);
+    lenis.on("scroll", (e: { progress?: number }) => {
+      ScrollTrigger.update();
+      updateProgress(e.progress);
+    });
     const tickerFn = (time: number) => {
       lenis.raf(time * 1000);
     };
@@ -141,6 +169,8 @@ export default function SmoothScroll() {
     document.addEventListener("click", handleAnchorClick);
 
     return () => {
+      window.removeEventListener("scroll", onNativeScroll);
+      window.removeEventListener("resize", onNativeScroll);
       document.removeEventListener("click", handleAnchorClick);
       gsap.ticker.remove(tickerFn);
       lenis.destroy();
@@ -148,6 +178,10 @@ export default function SmoothScroll() {
   }, []);
 
   useEffect(() => {
+    if (progressBarRef.current) {
+      progressBarRef.current.style.transform = "scaleX(0)";
+    }
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     gsap.registerPlugin(ScrollTrigger);
@@ -166,5 +200,9 @@ export default function SmoothScroll() {
     return () => window.clearTimeout(timer);
   }, [pathname]);
 
-  return null;
+  return (
+    <div className="scroll-progress" aria-hidden="true">
+      <div className="scroll-progress__bar" ref={progressBarRef} />
+    </div>
+  );
 }

@@ -30,11 +30,6 @@ export default async function HomePage() {
           <Link href="/materi" className="topbar-link">
             MATERI
           </Link>
-          {session.authenticated && session.role === "admin" ? (
-            <Link href="/admin" className="topbar-link">
-              ADMIN
-            </Link>
-          ) : null}
           {session.authenticated ? (
             <LogoutButton />
           ) : (
