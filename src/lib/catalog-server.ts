@@ -1,11 +1,67 @@
 import { CATEGORIES, MATERIALS, type Category, type MaterialItem, type Subcategory } from "@/data/catalog";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createServerSupabase, createServiceRoleSupabase } from "@/lib/supabase/server";
 
 export interface LoadedCatalog {
   categories: Category[];
   materials: MaterialItem[];
   supabaseReady: boolean;
+}
+
+/**
+ * Loads public category & subcategory metadata (names, icons, descriptions) for
+ * the landing page so changes made in /admin reflect immediately even before login.
+ * Private material URLs are never returned here.
+ */
+export async function loadPublicCategories(): Promise<Category[]> {
+  if (!isSupabaseConfigured()) return CATEGORIES;
+
+  try {
+    const db = process.env.SUPABASE_SERVICE_ROLE_KEY
+      ? createServiceRoleSupabase()
+      : await createServerSupabase();
+
+    const [catRes, subRes] = await Promise.all([
+      db.from("categories").select("*").order("sort_order", { ascending: true }),
+      db.from("subcategories").select("*").order("sort_order", { ascending: true }),
+    ]);
+
+    if (!catRes.error && catRes.data && catRes.data.length > 0) {
+      const subsByCat = new Map<string, Subcategory[]>();
+      if (!subRes.error && subRes.data) {
+        for (const row of subRes.data) {
+          const catId = String(row.category_id);
+          const list = subsByCat.get(catId) || [];
+          list.push({
+            id: String(row.id),
+            code: String(row.code || ""),
+            name: String(row.name),
+            label: String(row.label || row.name),
+            short: String(row.short || ""),
+          });
+          subsByCat.set(catId, list);
+        }
+      }
+
+      return catRes.data.map((row) => {
+        const id = String(row.id);
+        const subs = subsByCat.get(id);
+        return {
+          id,
+          code: String(row.code || ""),
+          name: String(row.name),
+          short: String(row.short || ""),
+          icon: String(row.icon || "game-icons:bookshelf"),
+          desc: String(row.description || ""),
+          ...(subs && subs.length > 0 ? { subcategories: subs } : {}),
+        };
+      });
+    }
+  } catch {
+    // Fallback to static catalog
+  }
+
+  return CATEGORIES;
 }
 
 export async function loadCatalog(): Promise<LoadedCatalog> {

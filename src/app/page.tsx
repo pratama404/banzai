@@ -2,13 +2,13 @@ import Link from "next/link";
 import Iconify from "@/components/Iconify";
 import LogoutButton from "@/components/LogoutButton";
 import { getCurrentAuthUser } from "@/lib/admin-auth";
-import { loadCatalog } from "@/lib/catalog-server";
+import { loadPublicCategories } from "@/lib/catalog-server";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [{ categories }, session] = await Promise.all([
-    loadCatalog(),
+  const [categories, session] = await Promise.all([
+    loadPublicCategories(),
     getCurrentAuthUser(),
   ]);
 
@@ -111,6 +111,24 @@ export default async function HomePage() {
               split-second tactical decisions under extreme pressure, and orchestrate every element
               of a naval task force into a unified and decisive fighting machine.
             </p>
+            <div className="about-stats">
+              <div className="about-stat">
+                <span className="about-stat__number" data-count-to={categories.length}>
+                  {categories.length}
+                </span>
+                <span className="about-stat__label">DISCIPLINES</span>
+              </div>
+              <div className="about-stat">
+                <span className="about-stat__number" data-count-to={2026}>
+                  2026
+                </span>
+                <span className="about-stat__label">CLASS YEAR</span>
+              </div>
+              <div className="about-stat">
+                <span className="about-stat__number">∞</span>
+                <span className="about-stat__label">COMMITMENT</span>
+              </div>
+            </div>
           </div>
           <div className="about-section__image">
             <img src="/assets/banzai-cover.jpg" alt="PWO 2026 Cover Art" loading="lazy" />

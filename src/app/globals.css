@@ -2884,3 +2884,74 @@ html.lenis body {
     background: rgba(0, 0, 0, .65);
   }
 }
+
+
+/* ══════════════════════════════════════════
+   LANDING MOTION POLISH (NAV SHRINK, GLOW, BACK-TO-TOP)
+   ══════════════════════════════════════════ */
+.topbar--transparent {
+  transition: min-height .24s ease, background .24s ease, border-color .24s ease, box-shadow .24s ease;
+}
+
+.topbar--transparent.is-scrolled {
+  min-height: 58px;
+  background: rgba(12, 12, 13, .94);
+  border-bottom-color: rgba(211, 168, 79, .26);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, .55);
+}
+
+.landing-hero__bg img {
+  will-change: transform;
+}
+
+.materi-card {
+  transition: border-color .25s ease, transform .25s ease, box-shadow .28s ease;
+}
+
+.materi-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, .55), 0 0 22px rgba(211, 168, 79, .16), inset 0 1px 0 rgba(223, 48, 48, .55);
+}
+
+.materi-card__icon {
+  transition: transform .28s ease, color .25s ease;
+}
+
+.materi-card:hover .materi-card__icon {
+  transform: scale(1.12) rotate(-4deg);
+  color: var(--gold);
+}
+
+.back-to-top {
+  position: fixed;
+  right: clamp(16px, 3vw, 28px);
+  bottom: clamp(18px, 3vw, 28px);
+  z-index: 180;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(211, 168, 79, .45);
+  background: rgba(18, 17, 17, .92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--gold);
+  font: 700 18px/1 var(--heading);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(14px);
+  pointer-events: none;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .6);
+  transition: opacity .22s ease, transform .22s ease, border-color .18s ease, background .18s ease, color .18s ease;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  border-color: var(--red);
+  background: var(--red);
+  color: #fff;
+  transform: translateY(-2px);
+}
