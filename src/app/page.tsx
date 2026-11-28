@@ -46,6 +46,15 @@ export default async function HomePage() {
           <img src="/assets/home-cover.png" alt="" loading="eager" />
         </div>
         <div className="landing-hero__overlay"></div>
+        <div className="hero-radar" aria-hidden="true">
+          <span className="hero-radar__ring hero-radar__ring--1"></span>
+          <span className="hero-radar__ring hero-radar__ring--2"></span>
+          <span className="hero-radar__ring hero-radar__ring--3"></span>
+          <span className="hero-radar__cross"></span>
+          <span className="hero-radar__sweep"></span>
+          <span className="hero-radar__blip hero-radar__blip--1"></span>
+          <span className="hero-radar__blip hero-radar__blip--2"></span>
+        </div>
 
         <div className="landing-hero__content">
           <p className="landing-hero__kicker"></p>
